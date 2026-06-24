@@ -100,4 +100,17 @@ class AdminController extends Controller
         return redirect()->route('admin.brands')->with('success','Brand updated successfully!');
     }
 
+    public function brandDelete($id){
+
+        $brand = Brand::findOrFail($id);
+
+        if($brand->image && file_exists('uploads/brands/'.$brand->image)){
+            @unlink(public_path('uploads/brands/'.$brand->image));
+        }
+
+        $brand->delete();
+
+        return back()->with('success','Brand deleted successfully!');
+    }
+
 }

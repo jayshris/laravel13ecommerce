@@ -35,7 +35,7 @@
         </div>
 
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-            @if(session('success'))
+            @if (session('success'))
                 <div class="px-6 py-4 bg-green-100 text-green-700 text-sm rounded-tl-xl  rounded-tr-xl ">
                     {{ session('success') }}
                 </div>
@@ -56,40 +56,52 @@
                     <tbody class="divide-y divide-gray-100">
                         @forelse ($brands as $brand)
                             <tr class="hover:bg-gray-50 transition">
-                                <td class="px-6 py-4 text-sm text-gray-500">{{$brand->id}}</td>
+                                <td class="px-6 py-4 text-sm text-gray-500">{{ $brand->id }}</td>
                                 <td class="px-6 py-4">
-                                    <div class="w-12 h-12 bg-gray-50 rounded-lg flex items-center justify-center border">
-                                        <img src="{{ asset('uploads/brands') }}/{{ $brand->image }}" class="max-w-[30px] max-h-[30px] object-contain"
-                                            alt="{{ $brand->name }}" onerror="this.src='https://placehold.co/40x40?text=B'">
+                                    <div
+                                        class="w-12 h-12 bg-gray-50 rounded-lg flex items-center justify-center border">
+                                        <img src="{{ asset('uploads/brands') }}/{{ $brand->image }}"
+                                            class="max-w-[30px] max-h-[30px] object-contain" alt="{{ $brand->name }}"
+                                            onerror="this.src='https://placehold.co/40x40?text=B'">
                                     </div>
                                 </td>
                                 <td class="px-6 py-4">
-                                    <span class="font-semibold text-gray-800">{{$brand->name}}</span>
+                                    <span class="font-semibold text-gray-800">{{ $brand->name }}</span>
                                 </td>
-                                <td class="px-6 py-4 text-sm text-gray-600">{{$brand->slug}}</td>
+                                <td class="px-6 py-4 text-sm text-gray-600">{{ $brand->slug }}</td>
                                 <td class="px-6 py-4">
-                                    <span class="bg-blue-50 text-blue-700 px-2 py-1 rounded text-xs font-semibold">0</span>
+                                    <span
+                                        class="bg-blue-50 text-blue-700 px-2 py-1 rounded text-xs font-semibold">0</span>
                                 </td>
                                 <td class="px-6 py-4">
                                     @if ($brand->status)
-                                        <span class="bg-green-100 text-green-700 px-2.5 py-1 rounded-full text-xs font-semibold">Active</span>
+                                        <span
+                                            class="bg-green-100 text-green-700 px-2.5 py-1 rounded-full text-xs font-semibold">Active</span>
                                     @else
-                                        <span class="bg-red-100 text-red-700 px-2.5 py-1 rounded-full text-xs font-semibold">Inactive</span>
+                                        <span
+                                            class="bg-red-100 text-red-700 px-2.5 py-1 rounded-full text-xs font-semibold">Inactive</span>
                                     @endif
 
                                 </td>
                                 <td class="px-6 py-4 text-right">
                                     <div class="flex items-center justify-end gap-2">
-                                        <a href="{{ route('admin.brand.edit',['id'=>$brand->id]) }}"
+                                        <a href="{{ route('admin.brand.edit', ['id' => $brand->id]) }}"
                                             class="w-8 h-8 rounded-full hover:bg-gray-100 text-blue-500 transition flex items-center justify-center"
                                             title="Edit">
                                             <i class="fa-solid fa-pen-to-square"></i>
                                         </a>
-                                        <button
-                                            class="w-8 h-8 rounded-full hover:bg-gray-100 text-red-500 transition flex items-center justify-center"
-                                            onclick="deleteBrand(this, 'Samsung', 101)" title="Delete">
-                                            <i class="fa-solid fa-trash"></i>
-                                        </button>
+
+                                        <form id="delete-form-{{ $brand->id }}" method="POST"
+                                            action="{{ route('admin.brand.delete', ['id' => $brand->id]) }}">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="button"
+                                                class="w-8 h-8 rounded-full hover:bg-gray-100 text-red-500 transition flex items-center justify-center"
+                                                onclick="deleteBrand(this, '{{ $brand->name }}', {{ $brand->id }})" title="Delete">
+                                                <i class="fa-solid fa-trash"></i>
+                                            </button>
+                                        </form>
+
                                     </div>
                                 </td>
                             </tr>
@@ -112,10 +124,101 @@
                 </table>
             </div>
 
-            <div class="px-6 py-4 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div
+                class="px-6 py-4 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-4">
                 {{ $brands->links() }}
+            </div>
+        </div>
+
+        <div id="deleteModal" class="fixed inset-0 z-50 hidden" aria-labelledby="modal-title" role="dialog"
+            aria-modal="true">
+            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity backdrop-blur-sm"></div>
+
+            <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
+                <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+                    <div
+                        class="relative transform overflow-hidden rounded-xl bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-md">
+                        <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+                            <div class="sm:flex sm:items-start">
+                                <div
+                                    class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+                                    <i class="fa-solid fa-triangle-exclamation text-red-600"></i>
+                                </div>
+                                <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
+                                    <h3 class="text-lg font-semibold leading-6 text-gray-900" id="modal-title">Delete
+                                        Brand</h3>
+                                    <div class="mt-2">
+                                        <p class="text-sm text-gray-500">Are you sure you want to delete <strong
+                                                id="delete-brand-name" class="text-gray-800">this brand</strong>? All of
+                                            its data will be permanently removed. This action cannot be undone.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+                            <button type="button" id="confirmDeleteBtn"
+                                class="inline-flex w-full justify-center rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto transition">Delete</button>
+                            <button type="button" id="cancelDeleteBtn"
+                                class="mt-3 inline-flex w-full justify-center rounded-lg bg-white px-4 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto transition">Cancel</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
     </main>
 </x-admin-layout>
+
+<script>
+    // Modal Elements
+    const deleteModal = document.getElementById('deleteModal');
+    const confirmBtn = document.getElementById('confirmDeleteBtn');
+    const cancelBtn = document.getElementById('cancelDeleteBtn');
+    const brandNameSpan = document.getElementById('delete-brand-name');
+
+    // Variables to hold the state of what we are deleting
+    let rowToDelete = null;
+    let brandIdToDelete = null;
+
+    // Function triggered when the trash icon is clicked
+    function deleteBrand(buttonElement, brandName, brandId) {
+        // Save the row so we can remove it later
+        rowToDelete = buttonElement.closest('tr');
+        brandIdToDelete = brandId;
+
+        // Update the modal text dynamically
+        brandNameSpan.textContent = brandName || "this brand";
+
+        // Show the modal by removing the 'hidden' class
+        deleteModal.classList.remove('hidden');
+    }
+
+    // Close Modal Function
+    function closeModal() {
+        deleteModal.classList.add('hidden');
+        rowToDelete = null;
+        brandIdToDelete = null;
+    }
+
+    // Handle Cancel Button
+    cancelBtn.addEventListener('click', closeModal);
+
+    // Handle clicking outside the modal to close it
+    deleteModal.addEventListener('click', function(event) {
+        // If the user clicks on the backdrop (not the panel), close it
+        if (event.target === this || event.target.classList.contains('bg-opacity-75')) {
+            closeModal();
+        }
+    });
+
+    // Handle Confirm Delete Button
+    confirmBtn.addEventListener('click', function() {
+
+        if (brandIdToDelete) {
+            const form = document.getElementById(`delete-form-${brandIdToDelete}`);
+            if(form){
+                form.submit();
+            }
+        }
+    });
+</script>
