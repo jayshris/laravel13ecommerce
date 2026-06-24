@@ -183,6 +183,24 @@
                     }
                 });
             });
+
+            function previewImage(event) {
+                const input = event.target;
+                const preview = document.getElementById('image-preview');
+                const placeholder = document.getElementById('upload-placeholder');
+
+                if (input.files && input.files[0]) {
+                    const reader = new FileReader();
+
+                    reader.onload = function(e) {
+                        preview.src = e.target.result;
+                        preview.classList.remove('hidden');       // Show image
+                        placeholder.classList.add('hidden');     // Hide upload icon text
+                    }
+
+                    reader.readAsDataURL(input.files[0]);
+                }
+            }
         </script>
     </body> 
 </html>

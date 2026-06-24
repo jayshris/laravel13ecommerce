@@ -6,7 +6,7 @@
                 <h1 class="text-2xl font-bold text-gray-800">Brands</h1>
                 <p class="text-sm text-gray-500">Manage product brands and partners</p>
             </div>
-            <a href="brand-add.php"
+            <a href="{{ route('admin.brand.add') }}"
                 class="bg-primary hover:bg-blue-600 text-white px-5 py-2.5 rounded-lg text-sm font-medium transition flex items-center gap-2 shadow-sm">
                 <i class="fa-solid fa-plus"></i> Add New Brand
             </a>
@@ -95,7 +95,7 @@
                                         <i class="fa-solid fa-boxes-stacked text-4xl mb-3 text-gray-300"></i>
                                         <h3 class="text-lg font-medium text-gray-900">Brands not available</h3>
                                         <p class="text-sm mt-1">You haven't added any brands to your store yet.</p>
-                                        <a href="brand-add.php"
+                                        <a href="{{ route('admin.brand.add') }}"
                                             class="mt-4 text-primary hover:underline text-sm font-medium">
                                             Add your first brand
                                         </a>
