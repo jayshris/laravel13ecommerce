@@ -4,12 +4,12 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
- 
+
         <title>Surfside Media | E-Commerce</title>
-        <link href="{{asset('favicon.ico')}}" rel="shortcut icon" type="image/x-icon" /> 
+        <link href="{{asset('favicon.ico')}}" rel="shortcut icon" type="image/x-icon" />
 
         <script src="https://cdn.tailwindcss.com"></script>
-    
+
         <script>
             tailwind.config = {
                 theme: {
@@ -39,10 +39,10 @@
     <body class="bg-gray-100 font-sans antialiased">
 
         <div class="flex h-screen overflow-hidden">
-            
+
             <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-64 bg-sky-800 text-gray-100 transition-transform transform -translate-x-full md:translate-x-0 md:static md:inset-0 flex flex-col">
                 <div class="flex items-center justify-center h-16 bg-sky-700 border-b border-gray-800">
-                    <a href="{{ route('admin.index') }} "><img src="assets/images/logo.png" alt="Logo" class="h-12" /></a>
+                    <a href="{{ route('admin.index') }} "><img src="{{ asset('assets/images/logo-w.png') }}" alt="Logo" class="h-12" /></a>
                 </div>
 
                 <div class="flex-1 overflow-y-auto py-4">
@@ -51,9 +51,9 @@
                             <i class="fa-solid fa-gauge-high w-5 text-center"></i>
                             <span>Dashboard</span>
                         </a>
-                        
+
                         <p class="px-4 text-xs font-semibold text-gray-300 uppercase mt-4 mb-2">Management</p>
-                        
+
                         <a href="products.php" class="nav-link flex items-center gap-3 px-4 py-2.5 text-gray-100 hover:text-white hover:bg-gray-800 rounded-lg transition">
                             <i class="fa-solid fa-box w-5 text-center"></i>
                             <span>Products</span>
@@ -94,7 +94,7 @@
                 <div class="p-4 border-t border-gray-800">
                     <a href="{{ route('logout') }}" onclick="event.preventDefault();document.getElementById('logout-form').submit();"  class="nav-link flex items-center gap-3 w-full px-4 py-2 text-gray-100 hover:text-white hover:bg-gray-800 rounded-lg transition">
                         <i class="fa-solid fa-right-from-bracket w-5 text-center"></i>
-                        <span>Logout</span> 
+                        <span>Logout</span>
                     </a>
                     <form id="logout-form" action="{{ route('logout') }}" method="POST" class="hidden">
                         @csrf
@@ -103,11 +103,11 @@
             </aside>
 
             <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden md:hidden">
-                
+
             </div>
 
             <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
-                
+
                 <header class="bg-white shadow-sm h-16 flex items-center justify-between px-6 z-30">
                     <button id="mobile-menu-btn" class="text-gray-500 focus:outline-none md:hidden">
                         <i class="fa-solid fa-bars text-2xl"></i>
@@ -133,7 +133,7 @@
                 </header>
 
                 <!-- Main Content Start -->
-        
+
                 {{ $slot }}
 
                 <!-- Main Content End -->
@@ -202,5 +202,5 @@
                 }
             }
         </script>
-    </body> 
+    </body>
 </html>
