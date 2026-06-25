@@ -2,21 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\DB;
-
 use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Product;
-
-use Spatie\Image\Image;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Spatie\Image\Enums\Fit;
 use Spatie\Image\Enums\ImageFormat;
-
-use Carbon\Carbon;
+use Spatie\Image\Image;
 
 class ProductController extends Controller
 {
@@ -77,30 +73,31 @@ class ProductController extends Controller
         if ($request->hasFile('image')) {
             $image = $request->file('image');
             $imageName = $current_timestamp.'.'.$request->image->extension();
-            $this->resizeAndSaveImage($image, $imageName ,'uploads/products/',570,604);
-            $this->resizeAndSaveImage($image, $imageName , 'uploads/products/thumbnails/',270,303);
+            $this->resizeAndSaveImage($image, $imageName, 'uploads/products/', 570, 604);
+            $this->resizeAndSaveImage($image, $imageName, 'uploads/products/thumbnails/', 270, 303);
             $product->image = $imageName;
         }
 
         $gallery_arr = [];
-        $gallery_imgs = '';$counter = 1;
+        $gallery_imgs = '';
+        $counter = 1;
         if ($request->hasFile('images')) {
-            $allowedfileExtion = ['jpg','png','jpeg','webp'];
+            $allowedfileExtion = ['jpg', 'png', 'jpeg', 'webp'];
             $files = $request->file('images');
 
-            foreach($files as $file){
+            foreach ($files as $file) {
                 $gextension = $file->getClientOriginalExtension();
-                $gcheck = in_array($gextension,$allowedfileExtion);
+                $gcheck = in_array($gextension, $allowedfileExtion);
 
-                if($gcheck){
+                if ($gcheck) {
                     $gimageName = $current_timestamp.'_'.$counter.'.'.$gextension;
-                    $this->resizeAndSaveImage($file, $gimageName ,'uploads/products/',570,604);
-                    $this->resizeAndSaveImage($file, $gimageName ,'uploads/products/thumbnails/',270,303);
-                    array_push($gallery_arr,$gimageName);
+                    $this->resizeAndSaveImage($file, $gimageName, 'uploads/products/', 570, 604);
+                    $this->resizeAndSaveImage($file, $gimageName, 'uploads/products/thumbnails/', 270, 303);
+                    array_push($gallery_arr, $gimageName);
                     $counter = $counter + 1;
                 }
             }
-            $gallery_imgs = implode(',',$gallery_arr);
+            $gallery_imgs = implode(',', $gallery_arr);
         }
         $product->images = $gallery_imgs;
 
@@ -109,14 +106,15 @@ class ProductController extends Controller
         return redirect()->route('admin.products')->with('success', 'Product added successfully!');
     }
 
-    function resizeAndSaveImage($file, $imageName ,$filePath,$width = 570,$height = 604){
+    public function resizeAndSaveImage($file, $imageName, $filePath, $width = 570, $height = 604)
+    {
 
         // 1. Store original temporarily on local filesystem
         $tempPath = $file->store('temp');
-        $absoluteTempPath = storage_path('app/private/' . $tempPath);
+        $absoluteTempPath = storage_path('app/private/'.$tempPath);
 
         // 2. Setup the final destination details
-        $finalPath = public_path($filePath. $imageName);
+        $finalPath = public_path($filePath.$imageName);
 
         // 3. Load, resize, and save directly to public storage
         Image::load($absoluteTempPath)
@@ -129,15 +127,17 @@ class ProductController extends Controller
         Storage::delete($tempPath);
     }
 
-     public function productEdit($id)
+    public function productEdit($id)
     {
         $product = Product::findOrFail($id);
         $categories = Category::select('id', 'name')->orderBy('name')->get();
         $brands = Brand::select('id', 'name')->orderBy('name')->get();
-        return view('admin.product-edit', compact('categories', 'brands','product'));
+
+        return view('admin.product-edit', compact('categories', 'brands', 'product'));
     }
 
-    function productUpdate(Request $request,$id){
+    public function productUpdate(Request $request, $id)
+    {
         $product = Product::findOrFail($id);
 
         $validated = $request->validate([
@@ -177,58 +177,87 @@ class ProductController extends Controller
         $current_timestamp = Carbon::now()->timestamp;
 
         if ($request->hasFile('image')) {
-            if($product->image && File::exists(public_path('uploads/products/'.$product->image))){
+            if ($product->image && File::exists(public_path('uploads/products/'.$product->image))) {
                 @unlink(public_path('uploads/products/'.$product->image));
             }
-            if($product->image && File::exists(public_path('uploads/products/thumbnails/'.$product->image))){
+            if ($product->image && File::exists(public_path('uploads/products/thumbnails/'.$product->image))) {
                 @unlink(public_path('uploads/products/thumbnails/'.$product->image));
             }
 
             $image = $request->file('image');
             $imageName = $current_timestamp.'.'.$request->image->extension();
-            $this->resizeAndSaveImage($image, $imageName ,'uploads/products/',570,604);
-            $this->resizeAndSaveImage($image, $imageName , 'uploads/products/thumbnails/',270,303);
+            $this->resizeAndSaveImage($image, $imageName, 'uploads/products/', 570, 604);
+            $this->resizeAndSaveImage($image, $imageName, 'uploads/products/thumbnails/', 270, 303);
             $product->image = $imageName;
         }
 
-        $gallery_arr = $product->images ? explode(',',$product->images) : [];
+        $gallery_arr = $product->images ? explode(',', $product->images) : [];
         if ($request->has('deleted_gallery_images') && is_array($request->deleted_gallery_images)) {
-            foreach($request->deleted_gallery_images as $deletedImg){
-                if($deletedImg && File::exists(public_path('uploads/products/'.$deletedImg))){
+            foreach ($request->deleted_gallery_images as $deletedImg) {
+                if ($deletedImg && File::exists(public_path('uploads/products/'.$deletedImg))) {
                     @unlink(public_path('uploads/products/'.$deletedImg));
                 }
-                if($deletedImg && File::exists(public_path('uploads/products/thumbnails/'.$deletedImg))){
+                if ($deletedImg && File::exists(public_path('uploads/products/thumbnails/'.$deletedImg))) {
                     @unlink(public_path('uploads/products/thumbnails/'.$deletedImg));
                 }
-                if(($key = array_search($deletedImg,$gallery_arr)) != false){
+                if (($key = array_search($deletedImg, $gallery_arr)) != false) {
                     unset($gallery_arr[$key]);
                 }
                 $gallery_arr = array_values($gallery_arr);
             }
 
             if ($request->hasFile('images')) {
-                $allowedfileExtion = ['jpg','png','jpeg','webp'];
+                $allowedfileExtion = ['jpg', 'png', 'jpeg', 'webp'];
                 $files = $request->file('images');
                 $counter = 1;
-                foreach($files as $file){
+                foreach ($files as $file) {
                     $gextension = $file->getClientOriginalExtension();
-                    $gcheck = in_array($gextension,$allowedfileExtion);
+                    $gcheck = in_array($gextension, $allowedfileExtion);
 
-                    if($gcheck){
+                    if ($gcheck) {
                         $gimageName = $current_timestamp.'_'.$counter.'.'.$gextension;
-                        $this->resizeAndSaveImage($file, $gimageName ,'uploads/products/',570,604);
-                        $this->resizeAndSaveImage($file, $gimageName ,'uploads/products/thumbnails/',270,303);
-                        array_push($gallery_arr,$gimageName);
+                        $this->resizeAndSaveImage($file, $gimageName, 'uploads/products/', 570, 604);
+                        $this->resizeAndSaveImage($file, $gimageName, 'uploads/products/thumbnails/', 270, 303);
+                        array_push($gallery_arr, $gimageName);
                         $counter = $counter + 1;
                     }
                 }
             }
 
         }
-        $product->images = !empty($gallery_arr) ? implode(',',$gallery_arr) : null;
+        $product->images = ! empty($gallery_arr) ? implode(',', $gallery_arr) : null;
 
         $product->save();
 
         return redirect()->route('admin.products')->with('success', 'Product updated successfully!');
+    }
+
+    public function productDelete($id)
+    {
+
+        $product = Product::findOrFail($id);
+
+        if ($product->image && file_exists('uploads/products/'.$product->image)) {
+            @unlink(public_path('uploads/categories/'.$product->image));
+        }
+
+        if ($product->image && file_exists('uploads/products/thumbnails/'.$product->image)) {
+            @unlink(public_path('uploads/categories/'.$product->image));
+        }
+
+        $gallery_arr = $product->images ? explode(',', $product->images) : [];
+        if ($gallery_arr) {
+            foreach ($gallery_arr as $deletedImg) {
+                    if ($deletedImg && File::exists(public_path('uploads/products/'.$deletedImg))) {
+                        @unlink(public_path('uploads/products/'.$deletedImg));
+                    }
+                    if ($deletedImg && File::exists(public_path('uploads/products/thumbnails/'.$deletedImg))) {
+                        @unlink(public_path('uploads/products/thumbnails/'.$deletedImg));
+                    }
+            }
+        }
+        $product->delete();
+
+        return back()->with('success','Product deleted successfully!');
     }
 }
