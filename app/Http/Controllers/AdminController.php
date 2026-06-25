@@ -10,6 +10,9 @@ use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver; // Or use Imagick driver if available
 use Intervention\Image\Laravel\Facades\Image;
 use Illuminate\Support\Facades\DB;
+
+use App\Models\Category;
+
 DB::enableQueryLog();
 
 class AdminController extends Controller
@@ -23,7 +26,7 @@ class AdminController extends Controller
         if($search = request('search')){
             $query->where('name','LIKE',"%{$search}%");
         }
-        // echo request('status');exit;
+
         if(request()->filled('status')){
             $query->where('status',request('status'));
         }
@@ -124,6 +127,43 @@ class AdminController extends Controller
         $brand->delete();
 
         return back()->with('success','Brand deleted successfully!');
+    }
+
+    public function categories(){
+        $query= Category::query();
+        if($search = request('search')){
+            $query->where('name','LIKE',"%{$search}%");
+        }
+
+        if(request()->filled('status')){
+            $query->where('status',request('status'));
+        }
+
+        $categories=  $query->orderBy('id','DESC')->paginate(10)->withQueryString();
+
+        return view('admin.categories',compact('categories'));
+    }
+
+    public function categoryAdd(){
+        // return view('admin.brand-add');
+    }
+
+     public function categoryEdit($id){
+        $categories = Category::findOrFail($id);
+        // return view('admin.category-edit',compact('categories'));
+    }
+
+    public function categoryDelete($id){
+
+        $category = Category::findOrFail($id);
+
+        if($category->image && file_exists('uploads/categories/'.$category->image)){
+            @unlink(public_path('uploads/categories/'.$category->image));
+        }
+
+        $category->delete();
+
+        return back()->with('success','Category deleted successfully!');
     }
 
 }

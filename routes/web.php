@@ -26,12 +26,22 @@ Route::middleware('auth')->group(function () {
 
 Route::middleware([AuthAdmin::class])->group(function () {
     Route::get('/admin', [AdminController::class,'index'])->name('admin.index');
+
+    //brands
     Route::get('/brands', [AdminController::class,'brands'])->name('admin.brands');
     Route::get('/brand-add', [AdminController::class,'brandAdd'])->name('admin.brand.add');
     Route::post('/brand-store', [AdminController::class,'brandStore'])->name('admin.brand.store');
     Route::get('/brand-edit/{id}', [AdminController::class,'brandEdit'])->name('admin.brand.edit');
     Route::put('/brand-udpate/{id}', [AdminController::class,'brandUpdate'])->name('admin.brand.update');
     Route::delete('/brand-delete/{id}', [AdminController::class,'brandDelete'])->name('admin.brand.delete');
+
+    //categories
+    Route::get('/categories', [AdminController::class,'categories'])->name('admin.categories');
+    Route::get('/category-add', [AdminController::class,'categoryAdd'])->name('admin.category.add');
+    // Route::post('/brand-store', [AdminController::class,'categoryStore'])->name('admin.category.store');
+    Route::get('/category-edit/{id}', [AdminController::class,'categoryEdit'])->name('admin.category.edit');
+    // Route::put('/category-udpate/{id}', [AdminController::class,'categoryUpdate'])->name('admin.category.update');
+    Route::delete('/category-delete/{id}', [AdminController::class,'categoryDelete'])->name('admin.category.delete');
 });
 
 require __DIR__.'/auth.php';
