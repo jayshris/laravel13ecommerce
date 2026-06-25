@@ -46,12 +46,12 @@
         </div>
 
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-            @if (session('success'))
-                <div class="px-6 py-4 bg-green-100 text-green-700 text-sm rounded-tl-xl  rounded-tr-xl ">
-                    {{ session('success') }}
-                </div>
-            @endif
             <div class="overflow-x-auto">
+                @if (session('success'))
+                    <div class="px-6 py-4 bg-green-100 text-green-700 text-sm rounded-tl-xl  rounded-tr-xl ">
+                        {{ session('success') }}
+                    </div>
+                @endif
                 <table class="w-full text-left whitespace-nowrap">
                     <thead class="bg-gray-50 text-gray-500 text-xs uppercase font-semibold">
                         <tr>
@@ -83,9 +83,11 @@
                                 <td class="px-6 py-4 text-sm text-gray-600">{{ $cat->slug }}</td>
                                 <td class="px-6 py-4 text-sm text-gray-600">
                                     @if ($cat->parent)
-                                        <span  class="bg-gray-100 text-gray-700 px-2.5 py-1 rounded-full text-xs font-semibold">{{ $cat->parent->name }}</span>
+                                        <span
+                                            class="bg-gray-100 text-gray-700 px-2.5 py-1 rounded-full text-xs font-semibold">{{ $cat->parent->name }}</span>
                                     @else
-                                        <span  class="bg-yellow-100 text-yellow-700 px-2.5 py-1 rounded-full text-xs font-semibold">-</span>
+                                        <span
+                                            class="bg-yellow-100 text-yellow-700 px-2.5 py-1 rounded-full text-xs font-semibold">-</span>
                                     @endif
                                 </td>
                                 <td class="px-6 py-4">
