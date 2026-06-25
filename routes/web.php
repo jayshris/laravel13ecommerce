@@ -5,11 +5,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ProductController;
 use App\Http\Middleware\AuthAdmin;
-
-// Route::get('/', function () {
-//     return view('welcome');
-// });
 
 Route::get('/', [HomeController::class,'index'])->name('home.index');
 
@@ -42,6 +39,9 @@ Route::middleware([AuthAdmin::class])->group(function () {
     Route::get('/category-edit/{id}', [AdminController::class,'categoryEdit'])->name('admin.category.edit');
     Route::put('/category-udpate/{id}', [AdminController::class,'categoryUpdate'])->name('admin.category.update');
     Route::delete('/category-delete/{id}', [AdminController::class,'categoryDelete'])->name('admin.category.delete');
+
+    //products
+    Route::get('/products', [ProductController::class,'products'])->name('admin.products');
 });
 
 require __DIR__.'/auth.php';
