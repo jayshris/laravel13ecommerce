@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Storage;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver; // Or use Imagick driver if available
 use Intervention\Image\Laravel\Facades\Image;
+use Illuminate\Support\Facades\DB;
+DB::enableQueryLog();
 
 class AdminController extends Controller
 {
@@ -17,7 +19,18 @@ class AdminController extends Controller
     }
 
     public function brands(){
-        $brands= Brand::orderBy('id','DESC')->paginate(10);
+        $query= Brand::query();
+        if($search = request('search')){
+            $query->where('name','LIKE',"%{$search}%");
+        }
+        // echo request('status');exit;
+        if(request()->filled('status')){
+            $query->where('status',request('status'));
+        }
+
+        $brands=  $query->orderBy('id','DESC')->paginate(10)->withQueryString();
+        // dd($query->toRawSql());
+        // dd(DB::getQueryLog());
 
         return view('admin.brands',compact('brands'));
     }

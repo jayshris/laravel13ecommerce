@@ -13,25 +13,35 @@
         </div>
 
         <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 mb-6">
-            <div class="flex flex-col md:flex-row gap-4 justify-between">
+            <form action="{{ route('admin.brands') }}" method="GET"
+                class="flex flex-col md:flex-row gap-4 justify-between">
                 <div class="flex flex-col md:flex-row gap-4 w-full md:w-auto">
                     <div class="relative w-full md:w-64">
                         <span class="absolute inset-y-0 left-0 flex items-center pl-3">
                             <i class="fa-solid fa-search text-gray-400"></i>
                         </span>
-                        <input type="text"
+                        <input type="text" name="search" value="{{ request('search') }}"
                             class="w-full pl-10 pr-4 py-2 border rounded-lg text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
                             placeholder="Search brand...">
                     </div>
 
-                    <select
+                    <select name="status" onchange="this.form.submit()"
                         class="w-full md:w-40 border px-3 py-2 rounded-lg text-sm focus:outline-none focus:border-primary bg-white text-gray-600">
-                        <option value="">All Status</option>
-                        <option value="active">Active</option>
-                        <option value="inactive">Inactive</option>
+                        <option value="" {{ request('status') == '' ? 'selected' : '' }}>All Status</option>
+                        <option value="1" {{ request('status') == 1 ? 'selected' : '' }}>Active</option>
+                        <option value="0" {{ request('status') == 0 && request()->filled('status') ? 'selected' : '' }}>Inactive</option>
                     </select>
+
+                    @if (request('search') || request()->filled('status'))
+                        <a href="{{ route('admin.brands') }}"
+                            class="bg-primary hover:bg-blue-600 text-white px-5 py-2.5 rounded-lg text-sm font-medium transition flex items-center gap-2 shadow-sm">
+                            <i class="fa-solid fa-xmark"></i> Clear
+                        </a>
+                    @endif
+
+                    <button type="submit" class="hidden">Apply</button>
                 </div>
-            </div>
+            </form>
         </div>
 
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
@@ -97,7 +107,8 @@
                                             @method('DELETE')
                                             <button type="button"
                                                 class="w-8 h-8 rounded-full hover:bg-gray-100 text-red-500 transition flex items-center justify-center"
-                                                onclick="deleteBrand(this, '{{ $brand->name }}', {{ $brand->id }})" title="Delete">
+                                                onclick="deleteBrand(this, '{{ $brand->name }}', {{ $brand->id }})"
+                                                title="Delete">
                                                 <i class="fa-solid fa-trash"></i>
                                             </button>
                                         </form>
@@ -149,7 +160,8 @@
                                         Brand</h3>
                                     <div class="mt-2">
                                         <p class="text-sm text-gray-500">Are you sure you want to delete <strong
-                                                id="delete-brand-name" class="text-gray-800">this brand</strong>? All of
+                                                id="delete-brand-name" class="text-gray-800">this brand</strong>? All
+                                            of
                                             its data will be permanently removed. This action cannot be undone.</p>
                                     </div>
                                 </div>
@@ -216,7 +228,7 @@
 
         if (brandIdToDelete) {
             const form = document.getElementById(`delete-form-${brandIdToDelete}`);
-            if(form){
+            if (form) {
                 form.submit();
             }
         }
