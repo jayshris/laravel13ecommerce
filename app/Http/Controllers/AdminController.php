@@ -32,7 +32,6 @@ class AdminController extends Controller
         }
 
         $brands=  $query->orderBy('id','DESC')->paginate(10)->withQueryString();
-        // dd($query->toRawSql());
         // dd(DB::getQueryLog());
 
         return view('admin.brands',compact('brands'));
@@ -90,7 +89,7 @@ class AdminController extends Controller
         $request->validate([
                 'name'=> 'required|string|max:255',
                 'slug'=> 'nullable|string|max:255|unique:brands,slug,'.$id,
-                'image'=> 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+                'image'=> 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
                 'status'=> 'nullable|boolean',
             ]);
 
@@ -140,17 +139,71 @@ class AdminController extends Controller
         }
 
         $categories=  $query->orderBy('id','DESC')->paginate(10)->withQueryString();
-
+        //  dd($query->toRawSql());
         return view('admin.categories',compact('categories'));
     }
 
     public function categoryAdd(){
-        // return view('admin.brand-add');
+        return view('admin.category-add');
     }
 
-     public function categoryEdit($id){
-        $categories = Category::findOrFail($id);
-        // return view('admin.category-edit',compact('categories'));
+    public function categoryStore(Request $request){
+        $request->validate([
+                'name'=> 'required|string|max:255',
+                'slug'=> 'nullable|string|max:255|unique:categories,slug',
+                'image'=> 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+                'status'=> 'nullable|boolean',
+            ]);
+
+        $category = new Category();
+        $category->name = $request->name;
+        $category->slug =  $request->slug ? Str::slug($request->slug) : Str::slug($request->name);
+        $category->status = $request->has('status') ? 1 : 0;
+
+        if($request->hasFile('image')){
+            $imageName = time().'_'.uniqid().'.'.$request->image->extension();
+            $request->image->move(public_path('uploads/categories'),$imageName);
+            $category->image = $imageName;
+        }
+
+        $category->save();
+
+        return redirect()->route('admin.categories')->with('success','Category added successfully!');
+    }
+
+    public function categoryEdit($id){
+        $category = Category::findOrFail($id);
+        return view('admin.category-edit',compact('category'));
+    }
+
+      public function categoryUpdate(Request $request,$id){
+        $request->validate([
+                'name'=> 'required|string|max:255',
+                'slug'=> 'nullable|string|max:255|unique:categories,slug,'.$id,
+                'image'=> 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+                'status'=> 'nullable|boolean',
+            ]);
+
+        $category = Category::findOrFail($id);
+        $category->name = $request->name;
+        $category->slug =  $request->slug ? Str::slug($request->slug) : Str::slug($request->name);
+        $category->status = $request->has('status') ? 1 : 0;
+
+        if($request->hasFile('image')){
+
+            if($category->image && file_exists('uploads/categories/'.$category->image)){
+                @unlink(public_path('uploads/categories/'.$category->image));
+            }
+
+            $imageName = time().'_'.uniqid().'.'.$request->image->extension();
+            $request->image->move(public_path('uploads/categories'),$imageName);
+            $category->image = $imageName;
+
+        }
+
+        $category->save();
+
+        return redirect()->route('admin.categories')->with('success','Category updated successfully!');
     }
 
     public function categoryDelete($id){

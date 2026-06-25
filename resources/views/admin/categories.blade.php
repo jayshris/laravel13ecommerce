@@ -108,7 +108,7 @@
                                             @method('DELETE')
                                             <button type="button"
                                                 class="w-8 h-8 rounded-full hover:bg-gray-100 text-red-500 transition flex items-center justify-center"
-                                                onclick="delete(this, '{{ $cat->name }}', {{ $cat->id }})"
+                                                onclick="deleteCat(this, '{{ $cat->name }}', {{ $cat->id }})"
                                                 title="Delete">
                                                 <i class="fa-solid fa-trash"></i>
                                             </button>
@@ -194,7 +194,7 @@
     let brandIdToDelete = null;
 
     // Function triggered when the trash icon is clicked
-    function delete(buttonElement, brandName, brandId) {
+    function deleteCat(buttonElement, brandName, brandId) {
         // Save the row so we can remove it later
         rowToDelete = buttonElement.closest('tr');
         brandIdToDelete = brandId;
