@@ -29,10 +29,20 @@
                         @error('slug')
                             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                         @enderror
-
                     </div>
                 </div>
-
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Parent Category</label>
+                    <select name="parent_id" class="w-full border px-4 py-2 rounded-lg outline-none focus:ring-1 focus:ring-primary bg-white">
+                        <option value="">Select Parenct Category</option>
+                        @foreach ($parentCategories as $pCat)
+                            <option value="{{ $pCat->id }}" {{$category->parent_id == $pCat->id ? 'selected' : '' }}>{{ $pCat->name }}</option>
+                        @endforeach
+                    </select>
+                    @error('parent_id')
+                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
                 <div class="flex flex-col md:flex-row gap-8 items-start pt-4">
                     @if ($category->image)
                         <div class="w-full md:w-1/3">

@@ -8,28 +8,45 @@
             </a>
         </div>
         <div class="max-w-3xl mx-auto">
-            <form  method="POST" action="{{ route('admin.category.store') }}" enctype="multipart/form-data" class="bg-white rounded-xl shadow-sm border border-gray-100 p-8 space-y-6">
+            <form method="POST" action="{{ route('admin.category.store') }}" enctype="multipart/form-data"
+                class="bg-white rounded-xl shadow-sm border border-gray-100 p-8 space-y-6">
                 @csrf
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Category Name *</label>
                         <input type="text" id="name" name="name" placeholder="e.g. Samsung"
                             class="w-full border px-4 py-2 rounded-lg outline-none focus:ring-1 focus:ring-primary"
-                            :value="old('name')" required autofocus autocomplete="name" >
+                            :value="old('name')" required autofocus autocomplete="name">
                         @error('name')
                             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                         @enderror
                     </div>
+
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Category Slug</label>
                         <input type="text" id="slug" name="slug" placeholder="samsung"
-                            class="w-full border px-4 py-2 rounded-lg bg-gray-50 outline-none"
-                             :value="old('slug')" required autofocus autocomplete="slug">
+                            class="w-full border px-4 py-2 rounded-lg bg-gray-50 outline-none" :value="old('slug')"
+                            required autofocus autocomplete="slug">
                         @error('slug')
                             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                         @enderror
 
                     </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Parent Category</label>
+                    <select name="parent_id"
+                        class="w-full border px-4 py-2 rounded-lg outline-none focus:ring-1 focus:ring-primary bg-white">
+                        <option value="">Select Parenct Category</option>
+                        @foreach ($parentCategories as $pCat)
+                            <option value="{{ $pCat->id }}" {{ old('parent_id') == $pCat->id ? 'selected' : '' }}>
+                                {{ $pCat->name }}</option>
+                        @endforeach
+                    </select>
+                    @error('parent_id')
+                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 <div>
@@ -49,9 +66,8 @@
                                 src="" alt="Logo Preview">
 
                             <input id="category-image" name="image" type="file" class="hidden"
-                                accept="image/png, image/jpeg, image/jpg, image/webp"  onchange="previewImage(event)"
-                                  />
-                             @error('image')
+                                accept="image/png, image/jpeg, image/jpg, image/webp" onchange="previewImage(event)" />
+                            @error('image')
                                 <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                             @enderror
                         </label>
@@ -66,10 +82,11 @@
                 </div>
 
                 <div class="flex items-center gap-2">
-                    <input type="checkbox" id="status" name="status" value="1" {{ old('status') ? 'checked' : '' }}
+                    <input type="checkbox" id="status" name="status" value="1"
+                        {{ old('status') ? 'checked' : '' }}
                         class="w-4 h-4 text-primary rounded border-gray-300 focus:ring-primary">
                     <label for="status" class="text-sm text-gray-700">Set as Active Category</label>
-                     @error('status')
+                    @error('status')
                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror
                 </div>

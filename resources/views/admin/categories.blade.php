@@ -59,6 +59,7 @@
                             <th class="px-6 py-4">Logo</th>
                             <th class="px-6 py-4">Category Name</th>
                             <th class="px-6 py-4">Slug</th>
+                            <th class="px-6 py-4">Parent</th>
                             <th class="px-6 py-4">Products</th>
                             <th class="px-6 py-4">Status</th>
                             <th class="px-6 py-4 text-right">Action</th>
@@ -80,6 +81,13 @@
                                     <span class="font-semibold text-gray-800">{{ $cat->name }}</span>
                                 </td>
                                 <td class="px-6 py-4 text-sm text-gray-600">{{ $cat->slug }}</td>
+                                <td class="px-6 py-4 text-sm text-gray-600">
+                                    @if ($cat->parent)
+                                        <span  class="bg-gray-100 text-gray-700 px-2.5 py-1 rounded-full text-xs font-semibold">{{ $cat->parent->name }}</span>
+                                    @else
+                                        <span  class="bg-yellow-100 text-yellow-700 px-2.5 py-1 rounded-full text-xs font-semibold">-</span>
+                                    @endif
+                                </td>
                                 <td class="px-6 py-4">
                                     <span
                                         class="bg-blue-50 text-blue-700 px-2 py-1 rounded text-xs font-semibold">0</span>
