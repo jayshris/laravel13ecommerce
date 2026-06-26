@@ -95,11 +95,32 @@
                                     <input type="checkbox" id="selectAll"
                                         class="rounded border-gray-300 text-primary focus:ring-primary">
                                 </th>
-                                <th class="px-6 py-4">Product Name</th>
+                                <th class="px-6 py-4">
+                                    <a href="{{ request()->fullUrlWithQuery(['sort_by' => 'name', 'sort_order' => request('sort_order') === 'asc' ? 'desc' : 'asc']) }}"
+                                        class="flex items-center gap-1 hover:text-primary transition">
+                                        Product Name
+                                        <i
+                                            class="fa-solid {{ request('sort_by') === 'name' ? (request('sort_order') == 'asc' ? 'fa-sort-up' : 'fa-sort-down') : 'fa-sort' }}  ml-1"></i>
+                                    </a>
+                                </th>
                                 <th class="px-6 py-4">Brand</th>
                                 <th class="px-6 py-4">Category</th>
-                                <th class="px-6 py-4">Price</th>
-                                <th class="px-6 py-4">Stock</th>
+                                <th class="px-6 py-4">
+                                    <a href="{{ request()->fullUrlWithQuery(['sort_by' => 'regular_price', 'sort_order' => request('sort_order') == 'asc' ? 'desc' : 'asc']) }}"
+                                        class="flex items-center gap-1 hover:text-primary transition">
+                                        Price
+                                        <i
+                                            class="fa-solid {{ request('sort_by') === 'regular_price' ? (request('sort_order') == 'asc' ? 'fa-sort-up' : 'fa-sort-down') : 'fa-sort' }} ml-1"></i>
+                                    </a>
+                                </th>
+                                <th class="px-6 py-4">
+                                    <a href="{{ request()->fullUrlWithQuery(['sort_by' => 'quantity', 'sort_order' => request('sort_order') == 'asc' ? 'desc' : 'asc']) }}"
+                                        class="flex items-center gap-1 hover:text-primary transition">
+                                        Stock
+                                        <i
+                                            class="fa-solid {{ request('sort_by') === 'quantity' ? (request('sort_order') == 'asc' ? 'fa-sort-up' : 'fa-sort-down') : 'fa-sort' }} ml-1"></i>
+                                    </a>
+                                </th>
                                 <th class="px-6 py-4">Status</th>
                                 <th class="px-6 py-4 text-right  no-print">Action</th>
                             </tr>
@@ -128,14 +149,14 @@
                                     <td class="px-6 py-4 text-sm font-medium text-gray-800">
                                         @if ($pro->sale_price)
                                             <span
-                                                class="lien-through text-gray-400 mr-2">{{ number_format($pro->regular_price, 2) }}</span>
-                                            <span class="text-primary">{{ number_format($pro->sale_price, 2) }}</span>
+                                                class="line-through text-gray-400 mr-2">${{ number_format($pro->regular_price, 2) }}</span>
+                                            <span class="text-primary">${{ number_format($pro->sale_price, 2) }}</span>
                                         @else
                                             <span
-                                                class="text-gray-800">{{ number_format($pro->regular_price, 2) }}</span>
+                                                class="text-gray-800">${{ number_format($pro->regular_price, 2) }}</span>
                                         @endif
                                     </td>
-                                    <td class="px-6 py-4 text-sm text-gray-600">{{ number_format($pro->quantity, 2) }}
+                                    <td class="px-6 py-4 text-sm text-gray-600">${{ number_format($pro->quantity, 2) }}
                                     </td>
                                     <td class="px-6 py-4">
                                         @if ($pro->status)
@@ -334,7 +355,7 @@
     });
 
     //print
-    function printDiv(divId){
+    function printDiv(divId) {
         var printContent = document.getElementById(divId).innerHTML;
         var originalContent = document.body.innerHTML;
         document.body.innerHTML = printContent;

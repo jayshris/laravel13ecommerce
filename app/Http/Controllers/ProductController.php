@@ -21,6 +21,9 @@ class ProductController extends Controller
 {
     public function products(Request $request)
     {
+        $sort_by = $request->input('sort_by','created_at');
+        $sort_order = $request->input('sort_order','desc');
+
         $query = Product::with('category','brand');
 
         if($request->filled('search')){
@@ -45,7 +48,7 @@ class ProductController extends Controller
 
         $categories = Category::select('id', 'name')->orderBy('name')->get();
         $brands = Brand::select('id', 'name')->orderBy('name')->get();
-        $products = $query->orderBy('created_at', 'DESC')->paginate(10)->withQueryString();
+        $products = $query->orderBy($sort_by, $sort_order)->paginate(10)->withQueryString();
 
         return view('admin.products', compact('products','categories', 'brands'));
     }
