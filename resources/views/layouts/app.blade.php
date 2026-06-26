@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
- 
+
         <title>Surfside Media | E-Commerce</title>
         <link href="{{asset('favicon.ico')}}" rel="shortcut icon" type="image/x-icon" />
         <script src="https://cdn.tailwindcss.com"></script>
@@ -30,7 +30,7 @@
         </script>
 
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-        {{-- <link rel="stylesheet" href="{{asset('assets/css/plugins/pe-icon-7-stroke.css')}}" /> --}} 
+        {{-- <link rel="stylesheet" href="{{asset('assets/css/plugins/pe-icon-7-stroke.css')}}" /> --}}
 
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
 
@@ -39,7 +39,7 @@
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
-    <body class="font-sans text-gray-600 antialiased"> 
+    <body class="font-sans text-gray-600 antialiased">
         <header class="hidden lg:block bg-white shadow-sm sticky top-0 z-50">
             <div class="container mx-auto py-4">
                 <div class="flex justify-between items-center">
@@ -53,7 +53,7 @@
                         <nav>
                             <ul class="flex space-x-8 font-medium text-gray-700">
                                 <li><a href="index.php" class="hover:text-primary transition">Home</a></li>
-                                <li><a href="shop.php" class="hover:text-primary transition">Shop</a></li>
+                                <li><a href="{{ route('shop.index') }}" class="hover:text-primary transition">Shop</a></li>
                                 <li><a href="cart.php" class="hover:text-primary transition">Cart</a></li>
                                 <li><a href="wishlist.php" class="hover:text-primary transition">Wishlist</a></li>
                                 <li><a href="contact.php" class="hover:text-primary transition">Contact</a></li>
@@ -73,7 +73,7 @@
                     </div>
 
                     <a href="wishlist.php" class="text-2xl hover:text-primary"><i class="fa-regular fa-heart"></i></a>
-                    
+
                     <a href="cart.php" class="text-2xl hover:text-primary relative">
                         <i class="fa-solid fa-bag-shopping"></i>
                         <span class="absolute -top-2 -right-2 bg-primary text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">3</span>
@@ -85,26 +85,26 @@
                                 <span class="flex items-center justify-center w-10 h-10 bg-blue-600 text-white rounded-full font-bold uppercase text-lg shadow-sm">
                                     {{strtoupper(substr(Auth::user()->name, 0, 1)) }}
                                 </span>
-                            @else   
+                            @else
                                  <span class="flex items-center justify-center w-10 h-10 bg-blue-600 text-white rounded-full font-bold uppercase text-lg shadow-sm">
                                     <i class="fa-regular fa-user"></i>
-                                </span>   
-                            @endauth                        
-                            
+                                </span>
+                            @endauth
+
                         </button>
-                        <ul class="absolute right-0 mt-2 w-40 bg-white border shadow-lg py-2 rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">                            
+                        <ul class="absolute right-0 mt-2 w-40 bg-white border shadow-lg py-2 rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
                             @guest
-                                <li><a href='{{ route('login') }}' class="block px-4 py-2 hover:bg-gray-100 text-sm">Sign In</a></li> 
-                                <li><a href='{{ route('register') }}' class="block px-4 py-2 hover:bg-gray-100 text-sm">Sign Up</a></li>  
-                            @else 
+                                <li><a href='{{ route('login') }}' class="block px-4 py-2 hover:bg-gray-100 text-sm">Sign In</a></li>
+                                <li><a href='{{ route('register') }}' class="block px-4 py-2 hover:bg-gray-100 text-sm">Sign Up</a></li>
+                            @else
                                 <li><a href='{{ Auth::user()->utype== "ADM" ? route('admin.index') : route('users.index') }}' class="block px-4 py-2 hover:bg-gray-100 text-sm">My Account</a></li>
                                 <li>
                                     <a href="{{ route('logout') }}" onclick="event.preventDefault();document.getElementById('logout-form').submit();" class="block px-4 py-2 hover:bg-gray-100 text-sm">Sign Out</a>
                                     <form id="logout-form" action="{{ route('logout') }}" method="POST" class="hidden">
                                         @csrf
                                     </form>
-                                </li>       
-                            @endguest       
+                                </li>
+                            @endguest
                         </ul>
                     </div>
                 </div>
@@ -137,7 +137,7 @@
                             <button id="mobile-avatar-button" class="text-xl hover:text-primary focus:outline-none">
                                 <i class="fa-regular fa-user"></i>
                             </button>
-                            
+
                             <ul id="avatar-submenu-mobile" class="absolute right-0 mt-3 w-44 bg-white border border-gray-100 shadow-xl py-2 rounded-lg hidden z-[100]">
                                 <li><a href="my-account.php" class="block px-4 py-2 hover:bg-gray-100 text-sm text-gray-700">My Account</a></li>
                                 <li><a href="checkout.php" class="block px-4 py-2 hover:bg-gray-100 text-sm text-gray-700">Checkout</a></li>
@@ -150,8 +150,8 @@
                 </div>
 
                 <div class="pb-2">
-                    <form action="shop.php" method="GET" class="relative">
-                        <input type="text" name="q" placeholder="Search for products..." 
+                    <form action="{{ route('shop.index') }}" method="GET" class="relative">
+                        <input type="text" name="q" placeholder="Search for products..."
                             class="w-full bg-gray-100 border-none px-4 py-2.5 rounded-lg text-sm focus:ring-2 focus:ring-primary focus:bg-white transition-all outline-none">
                         <button type="submit" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-primary">
                             <i class="fa-solid fa-magnifying-glass"></i>
@@ -169,7 +169,7 @@
             <nav class="p-4">
                 <ul class="space-y-4">
                     <li><a href="index.php" class="block hover:text-primary">Home</a></li>
-                    <li><a href="shop.php" class="block hover:text-primary">Shop</a></li>
+                    <li><a href="{{ route('shop.index') }}" class="block hover:text-primary">Shop</a></li>
                     <li><a href="cart.php" class="block hover:text-primary">Cart</a></li>
                     <li><a href="wishlist.php" class="block hover:text-primary">Wishlist</a></li>
                     <li><a href="contact.php" class="block hover:text-primary">Contact</a></li>
@@ -178,7 +178,7 @@
         </div>
         <div id="menu-overlay" class="fixed inset-0 bg-black bg-opacity-50 hidden z-[55]"></div>
 
-        <!-- Main Content Start --> 
+        <!-- Main Content Start -->
         {{ $slot }}
         <!-- Main Content End -->
 
@@ -229,7 +229,7 @@
                         </ul>
                     </div>
                 </div>
-                
+
                 <div class="border-t border-gray-400 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
                     <p class="text-sm">&copy; 2026 Surfside Media All rights reserved.</p>
                     <img src="{{asset('assets/images/payment.png')}}" alt="Payment" class="mt-4 md:mt-0" />
@@ -245,7 +245,7 @@
 
         <script>
             document.addEventListener("DOMContentLoaded", function() {
-                
+
                 // --- Helper: Select Element ---
                 const $ = (id) => document.getElementById(id);
                 const $$ = (selector) => document.querySelectorAll(selector);
@@ -320,26 +320,26 @@
                     1024: { slidesPerView: 4 }
                 };
 
-                initSwiper('.category-slider', { 
-                    slidesPerView: 2, spaceBetween: 20, loop: true, 
-                    breakpoints: { ...productBreakpoints, 1024: { slidesPerView: 6 } } 
+                initSwiper('.category-slider', {
+                    slidesPerView: 2, spaceBetween: 20, loop: true,
+                    breakpoints: { ...productBreakpoints, 1024: { slidesPerView: 6 } }
                 });
 
-                initSwiper('.brand-slider', { 
-                    slidesPerView: 2, spaceBetween: 20, loop: true, 
-                    breakpoints: { ...productBreakpoints, 1024: { slidesPerView: 5 } } 
+                initSwiper('.brand-slider', {
+                    slidesPerView: 2, spaceBetween: 20, loop: true,
+                    breakpoints: { ...productBreakpoints, 1024: { slidesPerView: 5 } }
                 });
 
-                initSwiper('.featured-slider', { 
-                    slidesPerView: 1, spaceBetween: 20, 
+                initSwiper('.featured-slider', {
+                    slidesPerView: 1, spaceBetween: 20,
                     navigation: { nextEl: '.feat-next', prevEl: '.feat-prev' },
-                    breakpoints: productBreakpoints 
+                    breakpoints: productBreakpoints
                 });
 
-                initSwiper('.related-slider', { 
-                    slidesPerView: 1, spaceBetween: 20, 
+                initSwiper('.related-slider', {
+                    slidesPerView: 1, spaceBetween: 20,
                     navigation: { nextEl: '.related-next', prevEl: '.related-prev' },
-                    breakpoints: productBreakpoints 
+                    breakpoints: productBreakpoints
                 });
 
                 // Gallery Thumbs logic
@@ -358,7 +358,7 @@
                     btn.addEventListener('click', () => {
                         $$('.tab-btn').forEach(b => b.classList.remove('active'));
                         $$('.tab-content').forEach(c => c.classList.add('hidden'));
-                        
+
                         btn.classList.add('active');
                         const target = $(btn.getAttribute('data-target'));
                         if (target) target.classList.remove('hidden');

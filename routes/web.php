@@ -7,6 +7,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProductController;
 use App\Http\Middleware\AuthAdmin;
+use App\Http\Controllers\ShopController;
 
 Route::get('/', [HomeController::class,'index'])->name('home.index');
 
@@ -50,5 +51,8 @@ Route::middleware([AuthAdmin::class])->group(function () {
     Route::delete('/products-bulk-delete', [ProductController::class,'productBultDelete'])->name('admin.products.bulk.delete');
     Route::get('/products-export', [ProductController::class,'productExport'])->name('admin.products.export');
 });
+
+//shop
+Route::get('/shops', [ShopController::class,'index'])->name('shop.index');
 
 require __DIR__.'/auth.php';
