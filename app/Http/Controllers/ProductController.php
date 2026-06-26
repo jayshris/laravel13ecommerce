@@ -198,8 +198,8 @@ class ProductController extends Controller
         $product->sale_price = $request->sale_price;
         $product->SKU = $request->SKU;
         $product->stock_status = $request->stock_status;
-        $product->featured = $request->featured;
-        $product->status = $request->status;
+        $product->featured = $request->boolean('featured');
+        $product->status = $request->boolean('status');
         $product->quantity = $request->quantity;
         $product->category_id = $request->category_id;
         $product->brand_id = $request->brand_id;

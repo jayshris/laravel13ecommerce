@@ -5,7 +5,7 @@
         <div class="relative z-10 text-center">
             <h2 class="text-4xl font-bold mb-2">Shop</h2>
             <ul class="flex justify-center space-x-2 text-sm">
-                <li><a href="{{ route('home.index')  }}" class="hover:text-primary">Home</a></li>
+                <li><a href="{{ route('home.index') }}" class="hover:text-primary">Home</a></li>
                 <li>/</li>
                 <li class="text-primary">Shop</li>
             </ul>
@@ -13,7 +13,7 @@
     </div>
 
     <div class="container mx-auto px-4 py-16">
-        <form id="form-filter" method="GET" action="{{ route('shop.index') }}" >
+        <form id="form-filter" method="GET" action="{{ route('shop.index') }}">
             <div class="flex flex-col lg:flex-row gap-8">
 
                 <aside class="w-full lg:w-1/4 order-2 lg:order-1 space-y-8">
@@ -25,6 +25,24 @@
                             <button class="absolute right-3 top-3 text-gray-400 hover:text-primary"><i
                                     class="fa fa-search"></i></button>
                         </form>
+                    </div>
+
+                    <div class="bg-gray-50 p-6 rounded-lg border">
+                        <h4 class="font-bold text-lg mb-4">Brands</h4>
+                        <ul class="space-y-3">
+                            @foreach ($brands as $brand)
+                                <li class="flex items-center">
+                                    <label class="flex items-center cursor-pointer hover:text-primary">
+                                        <input type="checkbox" name="brand[]" value="{{ $brand->id }}" {{  in_array($brand->id,request('brand',[])) ? 'checked' : '' }} class="peer custom-checkbox hidden filter-checkbox">
+                                        <div class="w-4 h-4 border border-gray-300 rounded mr-3 flex items-center justify-center bg-white transition peer-checked:bg-primary peer-checked:border-primary text-transparent peer-checked:text-white">
+                                            <i class="fa fa-check text-[10px]"></i>
+                                        </div>
+                                        {{ $brand->name }}({{ $brand->products_count }})
+                                    </label>
+                                </li>
+                            @endforeach
+
+                        </ul>
                     </div>
 
                     <div class="bg-gray-50 p-6 rounded-lg border">
@@ -153,7 +171,9 @@
                     <div
                         class="flex flex-col sm:flex-row justify-between items-center bg-white border p-4 rounded mb-8 shadow-sm">
                         <p class="text-sm mb-4 sm:mb-0">
-                            Showing <span class="font-bold text-primary">{{ $products->firstItem()??0 }}-{{  $products->lastItem()??0 }}</span> of <span class="font-bold">{{  $products->total()??0 }}</span>
+                            Showing <span
+                                class="font-bold text-primary">{{ $products->firstItem() ?? 0 }}-{{ $products->lastItem() ?? 0 }}</span>
+                            of <span class="font-bold">{{ $products->total() ?? 0 }}</span>
                             Results
                         </p>
 
@@ -171,68 +191,82 @@
 
                             <div class="flex items-center">
                                 <span class="mr-2 text-sm font-medium">Sort By:</span>
-                                <select name="sort_by" class="border rounded p-1 text-sm focus:outline-none focus:border-primary auto-submit">
-                                    <option value="newest" {{ request('sort_by') == 'newest' ? 'selected' : '' }}>Newest</option>
-                                    <option value="price_asc" {{ request('sort_by') == 'price_asc' ? 'selected' : '' }}>Price: Low to High</option>
-                                    <option value="price_dsc" {{ request('sort_by') == 'price_dsc' ? 'selected' : '' }}>Price: High to Low</option>
-                                    <option value="featured" {{ request('sort_by') == 'featured' ? 'selected' : '' }}>Featured</option>
+                                <select name="sort_by"
+                                    class="border rounded p-1 text-sm focus:outline-none focus:border-primary auto-submit">
+                                    <option value="newest" {{ request('sort_by') == 'newest' ? 'selected' : '' }}>
+                                        Newest</option>
+                                    <option value="price_asc"
+                                        {{ request('sort_by') == 'price_asc' ? 'selected' : '' }}>Price: Low to High
+                                    </option>
+                                    <option value="price_dsc"
+                                        {{ request('sort_by') == 'price_dsc' ? 'selected' : '' }}>Price: High to Low
+                                    </option>
+                                    <option value="featured" {{ request('sort_by') == 'featured' ? 'selected' : '' }}>
+                                        Featured</option>
                                 </select>
                             </div>
 
                             <div class="flex items-center">
                                 <span class="mr-2 text-sm font-medium">Sort By:</span>
-                                <select name="per_page" class="border rounded p-1 text-sm focus:outline-none focus:border-primary auto-submit">
-                                    <option value="12" {{ request('per_page') == '12' ? 'selected' : '' }}>12 Products</option>
-                                    <option value="24" {{ request('per_page') == '24' ? 'selected' : '' }}>24 Products</option>
-                                    <option value="48" {{ request('per_page') == '48' ? 'selected' : '' }}>48 Products</option>
+                                <select name="per_page"
+                                    class="border rounded p-1 text-sm focus:outline-none focus:border-primary auto-submit">
+                                    <option value="12" {{ request('per_page') == '12' ? 'selected' : '' }}>12
+                                        Products</option>
+                                    <option value="24" {{ request('per_page') == '24' ? 'selected' : '' }}>24
+                                        Products</option>
+                                    <option value="48" {{ request('per_page') == '48' ? 'selected' : '' }}>48
+                                        Products</option>
                                 </select>
                             </div>
                         </div>
                     </div>
 
                     <div id="product-grid-view" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                        @foreach($products as $product)
-                        <div class="group">
-                            <div class="relative overflow-hidden bg-gray-100 rounded-lg mb-4">
-                                <a href="{{ route('shop.product.details',$product->slug) }}">
-                                    <img src="{{ asset('uploads/products/thumbnails') }}/{{ $product->image }}" alt="{{ $product->name }}"
-                                        class="w-full h-[300px] object-cover transition duration-500 group-hover:scale-105"
-                                        onerror="this.src='https://placehold.co/40x40?text=NO-IMG'"/>
-                                </a>
-                                <div
-                                    class="absolute bottom-4 left-0 right-0 flex justify-center space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                    <button
-                                        class="w-10 h-10 bg-white rounded-full shadow hover:bg-primary hover:text-white flex items-center justify-center transition">
-                                        <i class="fa-regular fa-heart"></i>
-                                    </button>
-                                    <button
-                                        class="w-10 h-10 bg-white rounded-full shadow hover:bg-primary hover:text-white flex items-center justify-center transition">
-                                        <i class="fa-solid fa-bag-shopping"></i>
-                                    </button>
-                                    <button
-                                        class="w-10 h-10 bg-white rounded-full shadow hover:bg-primary hover:text-white flex items-center justify-center transition">
-                                        <i class="fa-solid fa-magnifying-glass"></i>
-                                    </button>
+                        @foreach ($products as $product)
+                            <div class="group">
+                                <div class="relative overflow-hidden bg-gray-100 rounded-lg mb-4">
+                                    <a href="{{ route('shop.product.details', $product->slug) }}">
+                                        <img src="{{ asset('uploads/products/thumbnails') }}/{{ $product->image }}"
+                                            alt="{{ $product->name }}"
+                                            class="w-full h-[300px] object-cover transition duration-500 group-hover:scale-105"
+                                            onerror="this.src='https://placehold.co/40x40?text=NO-IMG'" />
+                                    </a>
+                                    <div
+                                        class="absolute bottom-4 left-0 right-0 flex justify-center space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                        <button
+                                            class="w-10 h-10 bg-white rounded-full shadow hover:bg-primary hover:text-white flex items-center justify-center transition">
+                                            <i class="fa-regular fa-heart"></i>
+                                        </button>
+                                        <button
+                                            class="w-10 h-10 bg-white rounded-full shadow hover:bg-primary hover:text-white flex items-center justify-center transition">
+                                            <i class="fa-solid fa-bag-shopping"></i>
+                                        </button>
+                                        <button
+                                            class="w-10 h-10 bg-white rounded-full shadow hover:bg-primary hover:text-white flex items-center justify-center transition">
+                                            <i class="fa-solid fa-magnifying-glass"></i>
+                                        </button>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="text-center">
-                                <h4 class="text-lg font-medium hover:text-primary"><a href="{{ route('shop.product.details',$product->slug) }}">{{ $product->name }}</a></h4>
-                                <p class="text-primary font-bold mt-1">
+                                <div class="text-center">
+                                    <h4 class="text-lg font-medium hover:text-primary"><a
+                                            href="{{ route('shop.product.details', $product->slug) }}">{{ $product->name }}</a>
+                                    </h4>
+                                    <p class="text-primary font-bold mt-1">
                                     <div class="mb-4">
                                         <div class="flex items-center space-x-4 mb-2">
-                                            @if($product->sale_price && $product->sale_price < $product->regular_price)
-                                            <span class="text-xl text-gray-400 line-through">
-                                                ${{ number_format($product->regular_price,2) }}
-                                            </span>
+                                            @if ($product->sale_price && $product->sale_price < $product->regular_price)
+                                                <span class="text-xl text-gray-400 line-through">
+                                                    ${{ number_format($product->regular_price, 2) }}
+                                                </span>
                                             @endif
                                             <span class="text-2xl text-primary font-bold">
-                                                ${{ $product->sale_price ? number_format($product->sale_price,2) : number_format($product->regular_price, 2) }}
+                                                ${{ $product->sale_price ? number_format($product->sale_price, 2) : number_format($product->regular_price, 2) }}
                                             </span>
                                         </div>
                                     </div>
-                                </p>
+                                    </p>
+                                </div>
                             </div>
-                        </div>
                         @endforeach
                     </div>
 
@@ -244,11 +278,13 @@
                                         class="w-full h-full object-cover"></a>
                             </div>
                             <div class="w-full md:w-2/3 flex flex-col justify-center">
-                                <h4 class="text-xl font-bold hover:text-primary mb-2"><a href="{{ route('shop.product.details',$product->slug) }}">Elona bedside
+                                <h4 class="text-xl font-bold hover:text-primary mb-2"><a
+                                        href="{{ route('shop.product.details', $product->slug) }}">Elona bedside
                                         grey table</a></h4>
                                 <p class="text-primary font-bold text-lg mb-4">$40.00</p>
                                 <p class="text-gray-600 mb-6 text-sm leading-relaxed">
-                                    Block out the haters with the fresh adidas® Originals Kaval Windbreaker Jacket. Part of
+                                    Block out the haters with the fresh adidas® Originals Kaval Windbreaker Jacket. Part
+                                    of
                                     the Kaval Collection. Regular fit is eased, but not sloppy, and perfect for any
                                     activity.
                                 </p>
@@ -273,11 +309,13 @@
                                         class="w-full h-full object-cover"></a>
                             </div>
                             <div class="w-full md:w-2/3 flex flex-col justify-center">
-                                <h4 class="text-xl font-bold hover:text-primary mb-2"><a href="details.php">Simple Minimal
+                                <h4 class="text-xl font-bold hover:text-primary mb-2"><a href="details.php">Simple
+                                        Minimal
                                         Chair</a></h4>
                                 <p class="text-primary font-bold text-lg mb-4">$240.00</p>
                                 <p class="text-gray-600 mb-6 text-sm leading-relaxed">
-                                    Block out the haters with the fresh adidas® Originals Kaval Windbreaker Jacket. Part of
+                                    Block out the haters with the fresh adidas® Originals Kaval Windbreaker Jacket. Part
+                                    of
                                     the Kaval Collection. Regular fit is eased, but not sloppy, and perfect for any
                                     activity.
                                 </p>
@@ -306,7 +344,8 @@
                                         Chandelier Light</a></h4>
                                 <p class="text-primary font-bold text-lg mb-4">$40.00</p>
                                 <p class="text-gray-600 mb-6 text-sm leading-relaxed">
-                                    Block out the haters with the fresh adidas® Originals Kaval Windbreaker Jacket. Part of
+                                    Block out the haters with the fresh adidas® Originals Kaval Windbreaker Jacket. Part
+                                    of
                                     the Kaval Collection. Regular fit is eased, but not sloppy, and perfect for any
                                     activity.
                                 </p>
@@ -334,9 +373,9 @@
         </form>
     </div>
     <script>
-        document.addEventListener('DOMContentLoaded', function(){
-            const form= document.getElementById('form-filter');
-            document.querySelectorAll('.auto-submit').forEach(element => {
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('form-filter');
+            document.querySelectorAll('.auto-submit, .filter-checkbox').forEach(element => {
                 element.addEventListener('change', () => {
                     form.submit();
                 });
