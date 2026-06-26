@@ -1,4 +1,25 @@
 <x-app-layout>
+    <style>
+        .custom-range-slider::-webkit-slider-thumb {
+            pointer-events: auto;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            background: #0284c7;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .custom-range-slider::-moz-range-thumb {
+            pointer-events: auto;
+            width: 16px;
+            height: 16px;
+            background: #0284c7;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
     <div class="relative bg-sky-700 text-white h-64 flex items-center justify-center bg-cover bg-center"
         style="background-image: url('assets/images/page-banner.jpg');">
         <div class="absolute inset-0 bg-black bg-opacity-40"></div>
@@ -72,20 +93,26 @@
                     <div class="bg-gray-50 p-6 rounded-lg border">
                         <h4 class="font-bold text-lg mb-4">Filter By Price</h4>
                         <div class="relative pt-6 pb-2">
+                            <div class="absolute w-full h-1 bg-gray-300 rounded top-6 z-0"></div>
+
+                            <div id="range-track" class="absolute h-1 bg-primary rounded top-6 z-0"></div>
+
                             <div class="relative w-full h-1 bg-gray-300 rounded">
                                 <div class="absolute h-1 bg-primary rounded left-0 right-0" id="range-track"
-                                    style="left: 10%; right: 30%;"></div>
+                                    style="left: 0%; right:0%;"></div>
                             </div>
-                            <input type="range" min="0" max="500" value="50"
-                                class="absolute w-full h-1 bg-transparent appearance-none top-6 left-0 pointer-events-none z-20"
+                            <input type="range" name="min_price" min="0" max="1000"
+                                value="{{ request('min_price', 0) }}"
+                                class="absolute w-full h-1 bg-transparent appearance-none top-6 left-0 pointer-events-none z-20 custom-range-slider price-slider"
                                 id="range-min">
-                            <input type="range" min="0" max="500" value="350"
-                                class="absolute w-full h-1 bg-transparent appearance-none top-6 left-0 pointer-events-none z-20"
+                            <input type="range" name="max_price" min="0" max="1000"
+                                value="{{ request('max_price', 1000) }}"
+                                class="absolute w-full h-1 bg-transparent appearance-none top-6 left-0 pointer-events-none z-20 custom-range-slider price-slider"
                                 id="range-max">
 
                             <div class="flex justify-between mt-4 text-sm font-medium text-gray-600">
-                                <span>$<span id="price-min-display">50</span></span>
-                                <span>$<span id="price-max-display">350</span></span>
+                                <span>$<span id="price-min-display">{{ request('min_price', 0) }}</span></span>
+                                <span>$<span id="price-max-display">{{ request('max_price', 1000) }}</span></span>
                             </div>
                         </div>
                     </div>
@@ -260,8 +287,7 @@
                                         class="w-full h-full object-cover"></a>
                             </div>
                             <div class="w-full md:w-2/3 flex flex-col justify-center">
-                                <h4 class="text-xl font-bold hover:text-primary mb-2"><a
-                                        href=" ">Elona bedside
+                                <h4 class="text-xl font-bold hover:text-primary mb-2"><a href=" ">Elona bedside
                                         grey table</a></h4>
                                 <p class="text-primary font-bold text-lg mb-4">$40.00</p>
                                 <p class="text-gray-600 mb-6 text-sm leading-relaxed">
@@ -360,6 +386,21 @@
             document.querySelectorAll('.auto-submit, .filter-checkbox').forEach(element => {
                 element.addEventListener('change', () => {
                     form.submit();
+                });
+            });
+
+            let timeout = null;
+            document.querySelectorAll('.price-slider').forEach(slider => {
+                slider.addEventListener('input', function() {
+                    if (this.id == 'range-min') document.getElementById('price-min-display')
+                        .innerText = this.value;
+                    if (this.id == 'range-max') document.getElementById('price-max-display')
+                        .innerText = this.value;
+
+                    clearTimeout(timeout);
+                    timeout = setTimeout(() => {
+                        form.submit();
+                    }, 500);
                 });
             });
         });

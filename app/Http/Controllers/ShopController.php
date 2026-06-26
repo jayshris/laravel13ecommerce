@@ -34,6 +34,12 @@ class ShopController extends Controller
             $query->whereIn('category_id',$categoriesIds);
         }
 
+        if($request->filled('min_price') && $request->filled('max_price')){
+            $min_price = $request->input('min_price');
+            $max_price = $request->input('max_price');
+            $query->whereBetween('sale_price',[$min_price,$max_price]);
+        }
+
 
         $products = $query->paginate($per_page)->withQueryString();
 
