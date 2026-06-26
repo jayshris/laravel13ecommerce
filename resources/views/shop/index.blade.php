@@ -184,7 +184,7 @@
                     @foreach($products as $product)
                     <div class="group">
                         <div class="relative overflow-hidden bg-gray-100 rounded-lg mb-4">
-                            <a href="details.php">
+                            <a href="{{ route('shop.product.details',$product->slug) }}">
                                 <img src="{{ asset('uploads/products/thumbnails') }}/{{ $product->image }}" alt="{{ $product->name }}"
                                     class="w-full h-[300px] object-cover transition duration-500 group-hover:scale-105"
                                      onerror="this.src='https://placehold.co/40x40?text=NO-IMG'"/>
@@ -206,7 +206,7 @@
                             </div>
                         </div>
                         <div class="text-center">
-                            <h4 class="text-lg font-medium hover:text-primary"><a href="details.php">{{ $product->name }}</a></h4>
+                            <h4 class="text-lg font-medium hover:text-primary"><a href="{{ route('shop.product.details',$product->slug) }}">{{ $product->name }}</a></h4>
                             <p class="text-primary font-bold mt-1">
                                 <div class="mb-4">
                                     <div class="flex items-center space-x-4 mb-2">
@@ -234,7 +234,7 @@
                                     class="w-full h-full object-cover"></a>
                         </div>
                         <div class="w-full md:w-2/3 flex flex-col justify-center">
-                            <h4 class="text-xl font-bold hover:text-primary mb-2"><a href="details.php">Elona bedside
+                            <h4 class="text-xl font-bold hover:text-primary mb-2"><a href="{{ route('shop.product.details',$product->slug) }}">Elona bedside
                                     grey table</a></h4>
                             <p class="text-primary font-bold text-lg mb-4">$40.00</p>
                             <p class="text-gray-600 mb-6 text-sm leading-relaxed">

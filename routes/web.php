@@ -53,6 +53,7 @@ Route::middleware([AuthAdmin::class])->group(function () {
 });
 
 //shop
-Route::get('/shops', [ShopController::class,'index'])->name('shop.index');
+Route::get('/shop', [ShopController::class,'index'])->name('shop.index');
+Route::get('/shop/{slug}', [ShopController::class,'productDetails'])->name('shop.product.details');
 
 require __DIR__.'/auth.php';
