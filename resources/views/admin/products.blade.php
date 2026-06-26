@@ -6,7 +6,8 @@
                 <h1 class="text-2xl font-bold text-gray-800">Products</h1>
                 <p class="text-sm text-gray-500">Manage your product catalog</p>
             </div>
-            <button type="button" id="bulkDeleteBtn" class="hidden bg-red-600 hover:bg-red-700 text-white px-5 py-2.5 rounded-lg text-sm font-medium transition flex items-center gap-2 shadow-sm">
+            <button type="button" id="bulkDeleteBtn"
+                class="hidden bg-red-600 hover:bg-red-700 text-white px-5 py-2.5 rounded-lg text-sm font-medium transition flex items-center gap-2 shadow-sm">
                 <i class="fa-solid fa-trash"></i> Delete Selected (<span id="selectedCount">0</span>)
             </button>
             <a href="{{ route('admin.product.add') }}"
@@ -17,33 +18,47 @@
 
         <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 mb-6">
             <div class="flex flex-col md:flex-row gap-4 justify-between">
-                <div class="flex flex-col md:flex-row gap-4 w-full md:w-auto">
+                <form method="GET" action={{ url()->current() }} id="filterForm" class="flex flex-col md:flex-row gap-4 w-full md:w-auto">
                     <div class="relative w-full md:w-64">
                         <span class="absolute inset-y-0 left-0 flex items-center pl-3">
                             <i class="fa-solid fa-search text-gray-400"></i>
                         </span>
-                        <input type="text"
+                        <input type="text" name="search" value="{{ request('search') }}" onkeypress="if(event.key=== 'Enter') this.fomr.submit()"
                             class="w-full pl-10 pr-4 py-2 border rounded-lg text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
                             placeholder="Search product name...">
                     </div>
 
-                    <select
+                    <select name="category" onchange="this.form.submit()"
                         class="w-full md:w-48 border px-3 py-2 rounded-lg text-sm focus:outline-none focus:border-primary bg-white text-gray-600">
-                        <option value="">All Categories</option>
-                        <option value="furniture">Furniture</option>
-                        <option value="decor">Decor</option>
-                        <option value="lighting">Lighting</option>
+                        <option value="">Select Category</option>
+                        @foreach ($categories as $cat)
+                            <option value="{{ $cat->id }}" {{ request('category') == $cat->id ? 'selected' : '' }}>
+                                {{ $cat->name }}</option>
+                        @endforeach
                     </select>
 
-                    <select
+                    <select name="brand" onchange="this.form.submit()"
+                        class="w-full md:w-48 border px-3 py-2 rounded-lg text-sm focus:outline-none focus:border-primary bg-white text-gray-600">
+                        <option value="">Select Brand</option>
+                        @foreach ($brands as $brand)
+                            <option value="{{ $brand->id }}" {{ request('brand') == $brand->id ? 'selected' : '' }}>
+                                {{ $brand->name }}</option>
+                        @endforeach
+                    </select>
+
+                    <select name="status" onchange="this.form.submit()"
                         class="w-full md:w-40 border px-3 py-2 rounded-lg text-sm focus:outline-none focus:border-primary bg-white text-gray-600">
                         <option value="">All Status</option>
-                        <option value="active">Active</option>
-                        <option value="draft">Draft</option>
-                        <option value="out">Out of Stock</option>
+                        <option value="0" {{ request('status')|| request()->filled('status') ? 'selected' : '' }}>Draft</option>
+                        <option value="1" {{ request('status') == 1 ? 'selected' : '' }}>Published</option>
                     </select>
-                </div>
+                </form>
 
+                @if (request()->hasAny(['search', 'category', 'brand', 'status']))
+                    <a href="{{ route('admin.products') }}" class="text-gray-500 hover:underline text-sm font-medium self-center">
+                        Clear Filters
+                    </a>
+                @endif
                 <button
                     class="border border-gray-300 text-gray-600 hover:bg-gray-50 px-4 py-2 rounded-lg text-sm font-medium transition flex items-center justify-center gap-2">
                     <i class="fa-solid fa-file-export"></i> Export
@@ -53,112 +68,121 @@
 
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
             <form id="bulkActionForm" method="POST" action={{ route('admin.products.bulk.delete') }}>
-            @csrf
-            @method('DELETE')
-            <div class="overflow-x-auto">
-                @if (session('success'))
-                    <div class="px-6 py-4 bg-green-100 text-green-700 text-sm rounded-tl-xl  rounded-tr-xl ">
-                        {{ session('success') }}
-                    </div>
-                @endif
-                <table class="w-full text-left whitespace-nowrap">
-                    <thead class="bg-gray-50 text-gray-500 text-xs uppercase font-semibold">
-                        <tr>
-                            <th class="px-6 py-4">
-                                <input type="checkbox" id="selectAll" class="rounded border-gray-300 text-primary focus:ring-primary">
-                            </th>
-                            <th class="px-6 py-4">Product Name</th>
-                            <th class="px-6 py-4">Brand</th>
-                            <th class="px-6 py-4">Category</th>
-                            <th class="px-6 py-4">Price</th>
-                            <th class="px-6 py-4">Stock</th>
-                            <th class="px-6 py-4">Status</th>
-                            <th class="px-6 py-4 text-right">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-100">
-                        @forelse ($products as $pro)
-                        <tr class="hover:bg-gray-50 transition">
-                            <td class="px-6 py-4">
-                                <input type="checkbox" name="ids[]" value={{ $pro->id }} class="product-checkbox rounded border-gray-300 text-primary focus:ring-primary">
-                            </td>
-                            <td class="px-6 py-4">
-                                <div class="flex items-center gap-3">
-                                    <img src="{{ asset('uploads/products/thumbnails') }}/{{ $pro->image }}"
-                                        class="w-12 h-12 rounded object-cover border" alt="{{ $pro->name }}">
-                                    <div>
-                                        <p class="font-semibold text-gray-800 text-sm">{{ $pro->name }}</p>
-                                        <p class="text-xs text-gray-500">{{ $pro->SKU }}</p>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 text-sm text-gray-600">{{ $pro->brand->name }}</td>
-                            <td class="px-6 py-4 text-sm text-gray-600">{{ $pro->category->name }}</td>
-                            <td class="px-6 py-4 text-sm font-medium text-gray-800">
-                                @if($pro->sale_price)
-                                 <span class="lien-through text-gray-400 mr-2">{{ number_format($pro->regular_price,2) }}</span>
-                                 <span class="text-primary">{{ number_format($pro->sale_price,2) }}</span>
-                                @else
-                                 <span class="text-gray-800">{{ number_format($pro->regular_price,2) }}</span>
-                                @endif
-                            </td>
-                            <td class="px-6 py-4 text-sm text-gray-600">{{ number_format($pro->quantity,2) }}</td>
-                            <td class="px-6 py-4">
-                                <span class="bg-green-100 text-green-700 px-2.5 py-1 rounded-full text-xs font-semibold">
-                                    @if($pro->status)
-                                        Published
-                                    @else
-                                        Draft
-                                    @endif
-                                </span>
-                            </td>
-                            <td class="px-6 py-4 text-right">
-                                <div class="flex items-center justify-end gap-2">
-                                    <a href="{{ route('admin.product.edit', ['id' => $pro->id]) }}"
-                                        class="w-8 h-8 rounded-full hover:bg-gray-100 text-blue-500 transition flex items-center justify-center"
-                                        title="Edit">
-                                        <i class="fa-solid fa-pen-to-square"></i>
-                                    </a>
-                                    <form id="delete-form-{{ $pro->id }}" method="POST"
-                                            action="{{ route('admin.product.delete', ['id' => $pro->id]) }}">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="button"
-                                                class="w-8 h-8 rounded-full hover:bg-gray-100 text-red-500 transition flex items-center justify-center"
-                                                onclick="deletePro(this, '{{ $pro->name }}', {{ $pro->id }})"
-                                                title="Delete">
-                                                <i class="fa-solid fa-trash"></i>
-                                            </button>
-                                        </form>
-                                </div>
-                            </td>
-                        </tr>
-                        @empty
-                        <tr>
-                            <td colspan="7" class="px-6 py-12 text-center">
-                                <div class="flex flex-col items-center justify-center text-gray-500">
-                                    <i class="fa-solid fa-boxes-stacked text-4xl mb-3 text-gray-300"></i>
-                                    <h3 class="text-lg font-medium text-gray-900">Products not available</h3>
-                                    <p class="text-sm mt-1">You haven't added any products to your store yet.</p>
-                                    <a href="{{ route('admin.product.add') }}"
-                                        class="mt-4 text-primary hover:underline text-sm font-medium">
-                                        Add your first product
-                                    </a>
-                                </div>
-                            </td>
-                        </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
+                @csrf
+                @method('DELETE')
+                <div class="overflow-x-auto">
+                    @if (session('success'))
+                        <div class="px-6 py-4 bg-green-100 text-green-700 text-sm rounded-tl-xl  rounded-tr-xl ">
+                            {{ session('success') }}
+                        </div>
+                    @endif
+                    <table class="w-full text-left whitespace-nowrap">
+                        <thead class="bg-gray-50 text-gray-500 text-xs uppercase font-semibold">
+                            <tr>
+                                <th class="px-6 py-4">
+                                    <input type="checkbox" id="selectAll"
+                                        class="rounded border-gray-300 text-primary focus:ring-primary">
+                                </th>
+                                <th class="px-6 py-4">Product Name</th>
+                                <th class="px-6 py-4">Brand</th>
+                                <th class="px-6 py-4">Category</th>
+                                <th class="px-6 py-4">Price</th>
+                                <th class="px-6 py-4">Stock</th>
+                                <th class="px-6 py-4">Status</th>
+                                <th class="px-6 py-4 text-right">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100">
+                            @forelse ($products as $pro)
+                                <tr class="hover:bg-gray-50 transition">
+                                    <td class="px-6 py-4">
+                                        <input type="checkbox" name="ids[]" value={{ $pro->id }}
+                                            class="product-checkbox rounded border-gray-300 text-primary focus:ring-primary">
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center gap-3">
+                                            <img src="{{ asset('uploads/products/thumbnails') }}/{{ $pro->image }}"
+                                                class="w-12 h-12 rounded object-cover border"  onerror="this.src='https://placehold.co/40x40?text=NO-IMG'"
+                                                alt="{{ $pro->name }}">
+                                            <div>
+                                                <p class="font-semibold text-gray-800 text-sm">{{ $pro->name }}</p>
+                                                <p class="text-xs text-gray-500">{{ $pro->SKU }}</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 text-sm text-gray-600">{{ $pro->brand->name }}</td>
+                                    <td class="px-6 py-4 text-sm text-gray-600">{{ $pro->category->name }}</td>
+                                    <td class="px-6 py-4 text-sm font-medium text-gray-800">
+                                        @if ($pro->sale_price)
+                                            <span
+                                                class="lien-through text-gray-400 mr-2">{{ number_format($pro->regular_price, 2) }}</span>
+                                            <span class="text-primary">{{ number_format($pro->sale_price, 2) }}</span>
+                                        @else
+                                            <span
+                                                class="text-gray-800">{{ number_format($pro->regular_price, 2) }}</span>
+                                        @endif
+                                    </td>
+                                    <td class="px-6 py-4 text-sm text-gray-600">{{ number_format($pro->quantity, 2) }}
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <span
+                                            class="bg-green-100 text-green-700 px-2.5 py-1 rounded-full text-xs font-semibold">
+                                            @if ($pro->status)
+                                                Published
+                                            @else
+                                                Draft
+                                            @endif
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 text-right">
+                                        <div class="flex items-center justify-end gap-2">
+                                            <a href="{{ route('admin.product.edit', ['id' => $pro->id]) }}"
+                                                class="w-8 h-8 rounded-full hover:bg-gray-100 text-blue-500 transition flex items-center justify-center"
+                                                title="Edit">
+                                                <i class="fa-solid fa-pen-to-square"></i>
+                                            </a>
+                                            <form id="delete-form-{{ $pro->id }}" method="POST"
+                                                action="{{ route('admin.product.delete', ['id' => $pro->id]) }}">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="button"
+                                                    class="w-8 h-8 rounded-full hover:bg-gray-100 text-red-500 transition flex items-center justify-center"
+                                                    onclick="deletePro(this, '{{ $pro->name }}', {{ $pro->id }})"
+                                                    title="Delete">
+                                                    <i class="fa-solid fa-trash"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="7" class="px-6 py-12 text-center">
+                                        <div class="flex flex-col items-center justify-center text-gray-500">
+                                            <i class="fa-solid fa-boxes-stacked text-4xl mb-3 text-gray-300"></i>
+                                            <h3 class="text-lg font-medium text-gray-900">Products not available</h3>
+                                            <p class="text-sm mt-1">You haven't added any products to your store yet.
+                                            </p>
+                                            <a href="{{ route('admin.product.add') }}"
+                                                class="mt-4 text-primary hover:underline text-sm font-medium">
+                                                Add your first product
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
             </form>
 
-            <div class="px-6 py-4 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-4">
-                 {{ $products->links() }}
+            <div
+                class="px-6 py-4 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-4">
+                {{ $products->links() }}
             </div>
         </div>
 
-          <div id="deleteModal" class="fixed inset-0 z-50 hidden" aria-labelledby="modal-title" role="dialog"
+        <div id="deleteModal" class="fixed inset-0 z-50 hidden" aria-labelledby="modal-title" role="dialog"
             aria-modal="true">
             <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity backdrop-blur-sm"></div>
 
@@ -258,36 +282,36 @@
     const bulkDeleteBtn = document.getElementById('bulkDeleteBtn');
     const selectedCountSpan = document.getElementById('selectedCount');
     const bulkActionForm = document.getElementById('bulkActionForm');
-    const checkboxes= document.querySelectorAll('.product-checkbox');
+    const checkboxes = document.querySelectorAll('.product-checkbox');
 
     //Toggle all elements
-    selectAll.addEventListener('change',function(){
+    selectAll.addEventListener('change', function() {
         checkboxes.forEach(cb => cb.checked = this.checked);
         updateBulkBtn();
     })
 
     //toggle indiviusal checkbox
     checkboxes.forEach(cb => {
-        cb.addEventListener('change',updateBulkBtn);
+        cb.addEventListener('change', updateBulkBtn);
     });
 
-    function updateBulkBtn(){
+    function updateBulkBtn() {
         const checkedCount = document.querySelectorAll('.product-checkbox:checked').length;
         selectedCountSpan.textContent = checkedCount;
 
-        if(checkedCount>0){
+        if (checkedCount > 0) {
             bulkDeleteBtn.classList.remove('hidden');
-        }else{
+        } else {
             bulkDeleteBtn.classList.add('hidden');
             selectAll.checked = false;
         }
     }
 
     //delete confirmation
-    bulkDeleteBtn.addEventListener('click' ,()  =>{
+    bulkDeleteBtn.addEventListener('click', () => {
         const count = document.querySelectorAll('.product-checkbox:checked').length;
 
-        if(confirm(`Are you sure you want to delete ${count} selected products?`)){
+        if (confirm(`Are you sure you want to delete ${count} selected products?`)) {
             bulkActionForm.submit();
         }
 

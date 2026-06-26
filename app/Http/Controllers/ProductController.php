@@ -16,11 +16,35 @@ use Spatie\Image\Image;
 
 class ProductController extends Controller
 {
-    public function products()
+    public function products(Request $request)
     {
-        $products = Product::with('category', 'brand')->orderBy('created_at', 'DESC')->paginate(10);
+        $query = Product::with('category','brand');
 
-        return view('admin.products', compact('products'));
+        if($request->filled('search')){
+            $search = $request->input('search');
+            $query->where(function($q) use ($search){
+                $q->where('name','like',"%{$search}%")
+                ->orWhere('SKU','like',"%{$search}%");
+            });
+        }
+
+        if($request->filled('category')){
+            $query->where('category_id',$request->input('category'));
+        }
+
+        if($request->filled('brand')){
+            $query->where('brand_id',$request->input('brand'));
+        }
+
+         if($request->filled('status') && $request->input('status') != null){
+            $query->where('status',$request->input('status'));
+        }
+
+        $categories = Category::select('id', 'name')->orderBy('name')->get();
+        $brands = Brand::select('id', 'name')->orderBy('name')->get();
+        $products = $query->orderBy('created_at', 'DESC')->paginate(10)->withQueryString();
+
+        return view('admin.products', compact('products','categories', 'brands'));
     }
 
     public function productAdd()
