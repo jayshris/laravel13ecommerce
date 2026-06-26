@@ -7,9 +7,22 @@ use App\Models\Product;
 
 class ShopController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $products = Product::where('status',true)->orderBy('created_at','desc')->paginate(12);
+        $query= Product::query()->where('status',true);
+
+        $sortBy = $request->input('sort_by','newest');
+
+        match($sortBy){
+            'price_asc' => $query->orderBy('sale_price','asc'),
+            'price_dsc' => $query->orderBy('sale_price','desc'),
+            'featured' => $query->where('featured',true),
+            default => $query->latest()
+        };
+
+        $per_page = $request->input('per_page','1');
+
+        $products = $query->paginate($per_page)->withQueryString();
         return view('shop.index',compact('products'));
 
     }
