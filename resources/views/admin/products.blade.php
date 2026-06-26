@@ -6,6 +6,9 @@
                 <h1 class="text-2xl font-bold text-gray-800">Products</h1>
                 <p class="text-sm text-gray-500">Manage your product catalog</p>
             </div>
+            <button type="button" id="bulkDeleteBtn" class="hidden bg-red-600 hover:bg-red-700 text-white px-5 py-2.5 rounded-lg text-sm font-medium transition flex items-center gap-2 shadow-sm">
+                <i class="fa-solid fa-trash"></i> Delete Selected (<span id="selectedCount">0</span>)
+            </button>
             <a href="{{ route('admin.product.add') }}"
                 class="bg-primary hover:bg-blue-600 text-white px-5 py-2.5 rounded-lg text-sm font-medium transition flex items-center gap-2 shadow-sm">
                 <i class="fa-solid fa-plus"></i> Add New Product
@@ -49,6 +52,9 @@
         </div>
 
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+            <form id="bulkActionForm" method="POST" action={{ route('admin.products.bulk.delete') }}>
+            @csrf
+            @method('DELETE')
             <div class="overflow-x-auto">
                 @if (session('success'))
                     <div class="px-6 py-4 bg-green-100 text-green-700 text-sm rounded-tl-xl  rounded-tr-xl ">
@@ -59,7 +65,7 @@
                     <thead class="bg-gray-50 text-gray-500 text-xs uppercase font-semibold">
                         <tr>
                             <th class="px-6 py-4">
-                                <input type="checkbox" class="rounded border-gray-300 text-primary focus:ring-primary">
+                                <input type="checkbox" id="selectAll" class="rounded border-gray-300 text-primary focus:ring-primary">
                             </th>
                             <th class="px-6 py-4">Product Name</th>
                             <th class="px-6 py-4">Brand</th>
@@ -74,7 +80,7 @@
                         @forelse ($products as $pro)
                         <tr class="hover:bg-gray-50 transition">
                             <td class="px-6 py-4">
-                                <input type="checkbox" class="rounded border-gray-300 text-primary focus:ring-primary">
+                                <input type="checkbox" name="ids[]" value={{ $pro->id }} class="product-checkbox rounded border-gray-300 text-primary focus:ring-primary">
                             </td>
                             <td class="px-6 py-4">
                                 <div class="flex items-center gap-3">
@@ -145,6 +151,7 @@
                     </tbody>
                 </table>
             </div>
+            </form>
 
             <div class="px-6 py-4 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-4">
                  {{ $products->links() }}
@@ -244,4 +251,45 @@
             }
         }
     });
+
+
+    // Delet products
+    const selectAll = document.getElementById('selectAll');
+    const bulkDeleteBtn = document.getElementById('bulkDeleteBtn');
+    const selectedCountSpan = document.getElementById('selectedCount');
+    const bulkActionForm = document.getElementById('bulkActionForm');
+    const checkboxes= document.querySelectorAll('.product-checkbox');
+
+    //Toggle all elements
+    selectAll.addEventListener('change',function(){
+        checkboxes.forEach(cb => cb.checked = this.checked);
+        updateBulkBtn();
+    })
+
+    //toggle indiviusal checkbox
+    checkboxes.forEach(cb => {
+        cb.addEventListener('change',updateBulkBtn);
+    });
+
+    function updateBulkBtn(){
+        const checkedCount = document.querySelectorAll('.product-checkbox:checked').length;
+        selectedCountSpan.textContent = checkedCount;
+
+        if(checkedCount>0){
+            bulkDeleteBtn.classList.remove('hidden');
+        }else{
+            bulkDeleteBtn.classList.add('hidden');
+            selectAll.checked = false;
+        }
+    }
+
+    //delete confirmation
+    bulkDeleteBtn.addEventListener('click' ,()  =>{
+        const count = document.querySelectorAll('.product-checkbox:checked').length;
+
+        if(confirm(`Are you sure you want to delete ${count} selected products?`)){
+            bulkActionForm.submit();
+        }
+
+    })
 </script>
