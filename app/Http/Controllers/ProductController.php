@@ -14,6 +14,9 @@ use Spatie\Image\Enums\Fit;
 use Spatie\Image\Enums\ImageFormat;
 use Spatie\Image\Image;
 
+use App\Exports\ProductExport;
+use Maatwebsite\Excel\Facades\Excel;
+
 class ProductController extends Controller
 {
     public function products(Request $request)
@@ -319,5 +322,9 @@ class ProductController extends Controller
         $product->delete();
 
         return redirect()->route('admin.products')->with('success', 'Products deleted successfully!');
+    }
+
+    public function productExport(){
+        return Excel::download(new ProductExport,'products.xlsx');
     }
 }
