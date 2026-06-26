@@ -18,12 +18,14 @@
 
         <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 mb-6">
             <div class="flex flex-col md:flex-row gap-4 justify-between">
-                <form method="GET" action={{ url()->current() }} id="filterForm" class="flex flex-col md:flex-row gap-4 w-full md:w-auto">
+                <form method="GET" action={{ url()->current() }} id="filterForm"
+                    class="flex flex-col md:flex-row gap-4 w-full md:w-auto">
                     <div class="relative w-full md:w-64">
                         <span class="absolute inset-y-0 left-0 flex items-center pl-3">
                             <i class="fa-solid fa-search text-gray-400"></i>
                         </span>
-                        <input type="text" name="search" value="{{ request('search') }}" onkeypress="if(event.key=== 'Enter') this.fomr.submit()"
+                        <input type="text" name="search" value="{{ request('search') }}"
+                            onkeypress="if(event.key=== 'Enter') this.fomr.submit()"
                             class="w-full pl-10 pr-4 py-2 border rounded-lg text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
                             placeholder="Search product name...">
                     </div>
@@ -49,24 +51,34 @@
                     <select name="status" onchange="this.form.submit()"
                         class="w-full md:w-40 border px-3 py-2 rounded-lg text-sm focus:outline-none focus:border-primary bg-white text-gray-600">
                         <option value="">All Status</option>
-                        <option value="0" {{ request('status')|| request()->filled('status') ? 'selected' : '' }}>Draft</option>
+                        <option value="0" {{ request('status') || request()->filled('status') ? 'selected' : '' }}>
+                            Draft</option>
                         <option value="1" {{ request('status') == 1 ? 'selected' : '' }}>Published</option>
                     </select>
                 </form>
 
                 @if (request()->hasAny(['search', 'category', 'brand', 'status']))
-                    <a href="{{ route('admin.products') }}" class="text-gray-500 hover:underline text-sm font-medium self-center">
+                    <a href="{{ route('admin.products') }}"
+                        class="text-gray-500 hover:underline text-sm font-medium self-center">
                         Clear Filters
                     </a>
                 @endif
-                <button
-                    class="border border-gray-300 text-gray-600 hover:bg-gray-50 px-4 py-2 rounded-lg text-sm font-medium transition flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-file-export"></i> Export
-                </button>
+
+                <div class="flex gap-2">
+                    <button onclick="printDiv('printableArea')"
+                        class="border border-gray-300 text-gray-600 hover:bg-gray-50 px-4 py-2 rounded-lg text-sm font-medium transition flex items-center justify-center ">
+                        <i class="fa-solid fa-print"></i> Print
+                    </button>
+
+                    <button
+                        class="border border-gray-300 text-gray-600 hover:bg-gray-50 px-4 py-2 rounded-lg text-sm font-medium transition flex items-center justify-center ">
+                        <i class="fa-solid fa-file-export"></i> Export
+                    </button>
+                </div>
             </div>
         </div>
 
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <div id="printableArea" class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
             <form id="bulkActionForm" method="POST" action={{ route('admin.products.bulk.delete') }}>
                 @csrf
                 @method('DELETE')
@@ -79,7 +91,7 @@
                     <table class="w-full text-left whitespace-nowrap">
                         <thead class="bg-gray-50 text-gray-500 text-xs uppercase font-semibold">
                             <tr>
-                                <th class="px-6 py-4">
+                                <th class="px-6 py-4 no-print">
                                     <input type="checkbox" id="selectAll"
                                         class="rounded border-gray-300 text-primary focus:ring-primary">
                                 </th>
@@ -89,20 +101,21 @@
                                 <th class="px-6 py-4">Price</th>
                                 <th class="px-6 py-4">Stock</th>
                                 <th class="px-6 py-4">Status</th>
-                                <th class="px-6 py-4 text-right">Action</th>
+                                <th class="px-6 py-4 text-right  no-print">Action</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-100">
                             @forelse ($products as $pro)
                                 <tr class="hover:bg-gray-50 transition">
-                                    <td class="px-6 py-4">
+                                    <td class="px-6 py-4  no-print">
                                         <input type="checkbox" name="ids[]" value={{ $pro->id }}
                                             class="product-checkbox rounded border-gray-300 text-primary focus:ring-primary">
                                     </td>
                                     <td class="px-6 py-4">
                                         <div class="flex items-center gap-3">
                                             <img src="{{ asset('uploads/products/thumbnails') }}/{{ $pro->image }}"
-                                                class="w-12 h-12 rounded object-cover border"  onerror="this.src='https://placehold.co/40x40?text=NO-IMG'"
+                                                class="w-12 h-12 rounded object-cover border"
+                                                onerror="this.src='https://placehold.co/40x40?text=NO-IMG'"
                                                 alt="{{ $pro->name }}">
                                             <div>
                                                 <p class="font-semibold text-gray-800 text-sm">{{ $pro->name }}</p>
@@ -125,16 +138,19 @@
                                     <td class="px-6 py-4 text-sm text-gray-600">{{ number_format($pro->quantity, 2) }}
                                     </td>
                                     <td class="px-6 py-4">
-                                        <span
-                                            class="bg-green-100 text-green-700 px-2.5 py-1 rounded-full text-xs font-semibold">
-                                            @if ($pro->status)
+                                        @if ($pro->status)
+                                            <span
+                                                class="bg-green-100 text-green-700 px-2.5 py-1 rounded-full text-xs font-semibold">
                                                 Published
-                                            @else
+                                            </span>
+                                        @else
+                                            <span
+                                                class="bg-orange-100 text-orange-700 px-2.5 py-1 rounded-full text-xs font-semibold">
                                                 Draft
-                                            @endif
-                                        </span>
+                                            </span>
+                                        @endif
                                     </td>
-                                    <td class="px-6 py-4 text-right">
+                                    <td class="px-6 py-4 text-right  no-print">
                                         <div class="flex items-center justify-end gap-2">
                                             <a href="{{ route('admin.product.edit', ['id' => $pro->id]) }}"
                                                 class="w-8 h-8 rounded-full hover:bg-gray-100 text-blue-500 transition flex items-center justify-center"
@@ -315,5 +331,17 @@
             bulkActionForm.submit();
         }
 
-    })
+    });
+
+    //print
+    function printDiv(divId){
+        var printContent = document.getElementById(divId).innerHTML;
+        var originalContent = document.body.innerHTML;
+        document.body.innerHTML = printContent;
+
+        window.print();
+
+        document.body.innerHTML = originalContent;
+
+    }
 </script>
