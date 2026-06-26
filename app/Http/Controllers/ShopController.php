@@ -40,6 +40,14 @@ class ShopController extends Controller
             $query->whereBetween('sale_price',[$min_price,$max_price]);
         }
 
+        if($request->filled('search')){
+            $searchTerm = $request->input('search');
+            $query->where(function($q) use ($searchTerm){
+                $q->where('name','like',"%{$searchTerm}%")
+                ->orWhere('description','like',"%{$searchTerm}%");
+            });
+        }
+
 
         $products = $query->paginate($per_page)->withQueryString();
 

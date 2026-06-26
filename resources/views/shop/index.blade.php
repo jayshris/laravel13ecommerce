@@ -39,11 +39,24 @@
 
                 <aside class="w-full lg:w-1/4 order-2 lg:order-1 space-y-8">
 
+                    @if(request()->anyFilled(['search','brand','category','min_price','max_price','sort_by','per_page']))
+                        <div class="flex items-center space-x-2">
+                            Filters Applied:
+                            <a href="{{ route('shop.index') }}" class="text-sm text-red-500 hover:text-primary">
+                                <i class="fa-solid fa-xmark"></i>
+                            <span class="text-sm text-red-600">Clear All Filters</span>
+
+                            </a>
+                        </div>
+                    @endif
+
                     <div class="bg-gray-50 p-6 rounded-lg border">
                         <form class="relative">
-                            <input type="text" placeholder="Search product..."
+                            <input type="text" name="search" value="{{ request('search') }}" placeholder="Search product..."
                                 class="w-full border p-3 rounded focus:outline-none focus:border-primary pr-10">
-                            <button class="absolute right-3 top-3 text-gray-400 hover:text-primary"><i
+                            <button
+                            type="submit"
+                            class="absolute right-3 top-3 text-gray-400 hover:text-primary"><i
                                     class="fa fa-search"></i></button>
                         </form>
                     </div>
