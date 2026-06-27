@@ -17,7 +17,7 @@ class CartController extends Controller
     {
         try {
             $validatedData = $request->validate([
-               'proudct_id' => 'required|numeric',
+                'proudct_id' => 'required|numeric',
                 'name' => 'required|string',
                 'quantity' => 'required|numeric|min:1',
                 'price' => 'required|numeric|decimal:1,2|min:0',
@@ -25,6 +25,7 @@ class CartController extends Controller
         } catch (ValidationException $e) {
             // Returns an associative array of all errors grouped by field
             $errors = $e->errors();
+
             return response()->json([
                 'success' => false,
                 'message' => 'Validation failed',
@@ -34,6 +35,17 @@ class CartController extends Controller
 
         Cart::instance('cart')->add($request->proudct_id, $request->name, $request->quantity, $request->price)->associate('App\Models\Product');
 
-        return back()->with('success','Product added to cart successfully!');
+        return back()->with('success', 'Product added to cart successfully!');
+    }
+
+    public function update_cart(Request $request)
+    {
+        $validatedData = $request->validate([
+            'quantity' => 'required|numeric|min:1',
+        ]);
+
+        Cart::instance('cart')->update($request->rowId, $request->quantity);
+
+        return back()->with('success', 'Cart updated successfully!');
     }
 }

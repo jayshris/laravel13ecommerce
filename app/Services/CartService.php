@@ -114,7 +114,8 @@ class CartService
             }
         }
 
-        $item->subtotal =$item->qty* $item->price;
+        $item->subtotal = $item->qty* $item->price;
+        // echo $rowId.' '.$data.'<pre>';print_r($cart);exit;
 
         Session::put("cart.{$this->instance}",$cart);
         return $item;

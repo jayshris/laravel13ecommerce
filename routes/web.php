@@ -60,5 +60,6 @@ Route::get('/shop/{slug}', [ShopController::class,'productDetails'])->name('shop
 //cart
 Route::post('/cart/add', [CartController::class,'add_to_cart'])->name('cart.add');
 Route::get('/cart', [CartController::class,'index'])->name('cart.index');
+Route::put('/cart/update', [CartController::class,'update_cart'])->name('cart.update');
 
 require __DIR__.'/auth.php';
