@@ -1,0 +1,22 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\Facades\Cart;
+
+class WishlistController extends Controller
+{
+    public function add_to_wishlist(Request $request)
+    {
+        $validatedData = $request->validate([
+            'proudct_id' => 'required|numeric',
+            'name' => 'required|string',
+            'quantity' => 'required|numeric|min:1',
+            'price' => 'required|numeric|decimal:1,2|min:0',
+        ]);
+        Cart::instance('wishlist')->add($request->proudct_id, $request->name, $request->quantity, $request->price)->associate('App\Models\Product');
+
+        return back()->with('success', 'Product added to wishlist successfully!');
+    }
+}

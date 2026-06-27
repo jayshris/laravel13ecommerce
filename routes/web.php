@@ -9,6 +9,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Middleware\AuthAdmin;
 use App\Http\Controllers\ShopController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\WishlistController;
 
 Route::get('/', [HomeController::class,'index'])->name('home.index');
 
@@ -63,5 +64,8 @@ Route::get('/cart', [CartController::class,'index'])->name('cart.index');
 Route::put('/cart/update', [CartController::class,'update_cart'])->name('cart.update');
 Route::delete('/cart/remove/{rowId}', [CartController::class,'remove_from_cart'])->name('cart.remove');
 Route::delete('/cart/clear', [CartController::class,'clear_cart'])->name('cart.clear');
+
+//wishlist
+Route::post('/wishlist/add', [WishlistController::class,'add_to_wishlist'])->name('wishlist.add');
 
 require __DIR__.'/auth.php';

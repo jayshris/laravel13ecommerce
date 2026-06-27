@@ -39,12 +39,12 @@
 
                 <aside class="w-full lg:w-1/4 order-2 lg:order-1 space-y-8">
 
-                    @if(request()->anyFilled(['search','brand','category','min_price','max_price','sort_by','per_page']))
+                    @if (request()->anyFilled(['search', 'brand', 'category', 'min_price', 'max_price', 'sort_by', 'per_page']))
                         <div class="flex items-center space-x-2">
                             Filters Applied:
                             <a href="{{ route('shop.index') }}" class="text-sm text-red-500 hover:text-primary">
                                 <i class="fa-solid fa-xmark"></i>
-                            <span class="text-sm text-red-600">Clear All Filters</span>
+                                <span class="text-sm text-red-600">Clear All Filters</span>
 
                             </a>
                         </div>
@@ -52,11 +52,10 @@
 
                     <div class="bg-gray-50 p-6 rounded-lg border">
                         <form class="relative">
-                            <input type="text" name="search" value="{{ request('search') }}" placeholder="Search product..."
+                            <input type="text" name="search" value="{{ request('search') }}"
+                                placeholder="Search product..."
                                 class="w-full border p-3 rounded focus:outline-none focus:border-primary pr-10">
-                            <button
-                            type="submit"
-                            class="absolute right-3 top-3 text-gray-400 hover:text-primary"><i
+                            <button type="submit" class="absolute right-3 top-3 text-gray-400 hover:text-primary"><i
                                     class="fa fa-search"></i></button>
                         </form>
                     </div>
@@ -255,10 +254,27 @@
                                     </a>
                                     <div
                                         class="absolute bottom-4 left-0 right-0 flex justify-center space-x-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                        <button
-                                            class="w-10 h-10 bg-white rounded-full shadow hover:bg-primary hover:text-white flex items-center justify-center transition">
-                                            <i class="fa-regular fa-heart"></i>
-                                        </button>
+                                       @php
+                                           $isInWishList = Cart::instance('wishlist')->content()->contains('id',$product->id);
+                                       @endphp
+                                        <form action="{{ route('wishlist.add') }}" method="POST"
+                                            class="flex flex-wrap items-center gap-4 mb-8">
+                                            @csrf
+                                            <input type="hidden" name="proudct_id" value="{{ $product->id }}" />
+                                            <input type="hidden" name="quantity" value="1" />
+                                            <input type="hidden" name="price"
+                                                value="{{ $product->regular_price ? $product->sale_price : $product->regular_price }}" />
+                                            <input type="hidden" name="name" value="{{ $product->name }}" />
+
+                                            <button
+                                                class="w-10 h-10 bg-white rounded-full shadow hover:bg-primary hover:text-white flex items-center justify-center transition">
+                                                @if ($isInWishList)
+                                                    <i class="fa-solid fa-heart text-red-500"></i>
+                                                @else
+                                                    <i class="fa-regular fa-heart"></i>
+                                                @endif
+                                            </button>
+                                        </form>
                                         <button
                                             class="w-10 h-10 bg-white rounded-full shadow hover:bg-primary hover:text-white flex items-center justify-center transition">
                                             <i class="fa-solid fa-bag-shopping"></i>
