@@ -3,8 +3,11 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+
 // 1. Import the Schema facade
 use Illuminate\Support\Facades\Schema;
+
+use Illuminate\Foundation\AliasLoader;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -13,7 +16,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->singleton('cart',function(){
+            return new \App\Services\CartService();
+        });
     }
 
     /**
@@ -23,5 +28,9 @@ class AppServiceProvider extends ServiceProvider
     {
         // 2. Set the default maximum string length for indexes
         Schema::defaultStringLength(191);
+
+
+        $loader = AliasLoader::getInstance();
+        $loader->alias('Cart',\App\Facades\Cart::class);
     }
 }
