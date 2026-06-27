@@ -15,7 +15,7 @@
     <section class="py-16">
         <div class="container mx-auto px-4">
             @if (Cart::instance('cart')->content()->count() == 0)
-                <div id="empty-cart" class="text-center py-10 hidden">
+                <div id="empty-cart" class="text-center py-10">
                     <h2 class="text-2xl font-bold mb-4">There are no more items in your cart</h2>
                     <img src="assets/images/cart.png" alt="Empty Cart" class="mx-auto mb-6 max-w-xs">
                     <p class="text-gray-500 mb-6">No item found in your cart</p>
@@ -77,8 +77,14 @@
                                         <td class="py-4 px-4 font-bold text-primary" data-label="Total">
                                             ${{ number_format($item->subtotal, 2) }}</td>
                                         <td class="py-4 px-4" data-label="Action">
-                                            <button class="text-gray-400 hover:text-red-500 transition"><i
-                                                    class="fa-solid fa-trash-can text-xl"></i></button>
+                                            <form action="{{ route('cart.remove', $item->rowId) }}" method="POST"
+                                                class="inline-block">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit"
+                                                    class="text-gray-400 hover:text-red-500 transition"><i
+                                                        class="fa-solid fa-trash-can text-xl"></i></button>
+                                            </form>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -87,16 +93,17 @@
                     </div>
 
                     <div class="flex flex-col sm:flex-row justify-between items-center mb-12 gap-4">
-                        <a href="shop.php"
+                        <a href="{{ route('shop.index') }}"
                             class="bg-sky-800 text-white px-6 py-3 rounded hover:bg-primary transition w-full sm:w-auto text-center">Continue
                             Shopping</a>
                         <div class="flex gap-4 w-full sm:w-auto">
-                            <a href="#"
-                                class="border border-gray-800 text-gray-800 px-6 py-3 rounded hover:bg-sky-800 hover:text-white transition w-full sm:w-auto text-center">Clear
-                                Cart</a>
-                            <a href="#"
-                                class="border border-gray-800 text-gray-800 px-6 py-3 rounded hover:bg-sky-800 hover:text-white transition w-full sm:w-auto text-center">Update
-                                Cart</a>
+                            <form action="{{ route('cart.clear') }}" method="POST" class="w-full">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit"
+                                    class="border border-gray-800 text-gray-800 px-6 py-3 rounded hover:bg-sky-800 hover:text-white transition w-full sm:w-auto text-center">Clear
+                                    Cart</button>
+                            </form>
                         </div>
                     </div>
 
@@ -184,12 +191,12 @@
         </div>
     </section>
     <script>
-        function updateCartQty(button, change,event){
+        function updateCartQty(button, change, event) {
             const form = button.closest('form');
             const quantityInput = form.querySelector('input[name="quantity"]');
             const currentQty = parseInt(quantityInput.value);
-            if(isNaN(currentQty)) currentQty = 0;
-            const newQty = Math.max(0,currentQty + change);
+            if (isNaN(currentQty)) currentQty = 0;
+            const newQty = Math.max(0, currentQty + change);
             quantityInput.value = newQty;
         }
     </script>

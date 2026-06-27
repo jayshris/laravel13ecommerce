@@ -126,6 +126,7 @@ class CartService
         $cart = $this->getCart();
         $cart->forget($rowId);
         Session::put("cart.{$this->instance}",$cart);
+        return $cart;
     }
 
     public function destroy(): void

@@ -61,5 +61,7 @@ Route::get('/shop/{slug}', [ShopController::class,'productDetails'])->name('shop
 Route::post('/cart/add', [CartController::class,'add_to_cart'])->name('cart.add');
 Route::get('/cart', [CartController::class,'index'])->name('cart.index');
 Route::put('/cart/update', [CartController::class,'update_cart'])->name('cart.update');
+Route::delete('/cart/remove/{rowId}', [CartController::class,'remove_from_cart'])->name('cart.remove');
+Route::delete('/cart/clear', [CartController::class,'clear_cart'])->name('cart.clear');
 
 require __DIR__.'/auth.php';
