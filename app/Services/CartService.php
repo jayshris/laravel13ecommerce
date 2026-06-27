@@ -8,6 +8,7 @@ class CartService
 {
     protected string $instance = 'default';
     protected ?string $lastRowId = null;
+    protected $defaultTax = 18;
 
     public function instance(string $name):self
     {
@@ -40,7 +41,7 @@ class CartService
             'qty' => $qty,
             'price' => (float) $price,
             'options' => $options,
-            'tax' => $tax,
+            'tax' => $tax !=null ? $tax : $this->defaultTax,
             'subtotal' => $qty * $price,
             'associatedModel' => null
         ];
@@ -93,7 +94,7 @@ class CartService
         return null;
     }
 
-    public function content(string $rowId): ?Collection
+    public function content(): ?Collection
     {
         return $this->getCart();
     }
@@ -131,9 +132,21 @@ class CartService
         Session::forget("cart.{$this->instance}");
     }
 
-    public function total(): float
+    public function subtotal(): float
     {
         return (float) $this->getCart()->sum('subtotal');
+    }
+
+    public function taxTotal(): float
+    {
+        return (float) $this->getCart()->sum(function ($item){
+            return ($item->price * $item->qty) * ($item->tax/100);
+        });
+    }
+
+    public function total(): float
+    {
+        return $this->subtotal() + $this->taxTotal();
     }
 
     public function count(): int

@@ -8,6 +8,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProductController;
 use App\Http\Middleware\AuthAdmin;
 use App\Http\Controllers\ShopController;
+use App\Http\Controllers\CartController;
 
 Route::get('/', [HomeController::class,'index'])->name('home.index');
 
@@ -55,5 +56,9 @@ Route::middleware([AuthAdmin::class])->group(function () {
 //shop
 Route::get('/shop', [ShopController::class,'index'])->name('shop.index');
 Route::get('/shop/{slug}', [ShopController::class,'productDetails'])->name('shop.product.details');
+
+//cart
+Route::post('/cart/add', [CartController::class,'add_to_cart'])->name('cart.add');
+Route::get('/cart', [CartController::class,'index'])->name('cart.index');
 
 require __DIR__.'/auth.php';
