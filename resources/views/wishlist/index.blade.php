@@ -45,15 +45,16 @@
                                     <td class="py-4 px-4 product-thumb" data-label="Image">
                                         <a href="{{ route('shop.product.details', $product->slug) }}">
                                             <img src="{{ asset('uploads/products/thumbnails') }}/{{ $product->image }}"
-                                            class="w-20 h-20 object-cover rounded" alt="{{ $item->name }}"
-                                            onerror="this.src='https://placehold.co/40x40?text=NO-IMG'">
+                                                class="w-20 h-20 object-cover rounded" alt="{{ $item->name }}"
+                                                onerror="this.src='https://placehold.co/40x40?text=NO-IMG'">
                                         </a>
                                     </td>
                                     <td class="py-4 px-4" data-label="Product">
                                         <h6 class="font-bold text-gray-800"><a href="details.php"
                                                 class="hover:text-primary">{{ $item->name }}</a></h6>
                                         <div class="text-sm mt-1">
-                                            <span class="text-primary font-bold">${{ number_format($item->price, 2) }}</span>
+                                            <span
+                                                class="text-primary font-bold">${{ number_format($item->price, 2) }}</span>
                                         </div>
                                     </td>
                                     <td class="py-4 px-4" data-label="Quantity">
@@ -65,14 +66,37 @@
                                             to Cart</button>
                                     </td>
                                     <td class="py-4 px-4" data-label="Action">
-                                        <button class="text-gray-400 hover:text-red-500 transition"><i
-                                                class="fa-solid fa-trash-can text-xl"></i></button>
+                                        <form action="{{ route('wishlist.remove', $item->rowId) }}"
+                                            onsubmit="return confirm('Are you sure you want to remove this item from your wishlist?')"
+                                            method="POST" class="inline-block">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit"
+                                                class="text-gray-400 hover:text-red-500 transition"><i
+                                                    class="fa-solid fa-trash-can text-xl"></i></button>
+                                        </form>
                                     </td>
                                 </tr>
                             @endforeach
                         </tbody>
                     </table>
                 </div>
+
+                <div class="flex flex-col sm:flex-row justify-between items-center mb-12 gap-4">
+                    <a href="{{ route('shop.index') }}"
+                        class="bg-sky-800 text-white px-6 py-3 rounded hover:bg-primary transition w-full sm:w-auto text-center">Continue
+                        Shopping</a>
+                    <div class="flex gap-4 w-full sm:w-auto">
+                        <form action="{{ route('wishlist.clear') }}" method="POST" class="w-full">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit"
+                                class="border border-gray-800 text-gray-800 px-6 py-3 rounded hover:bg-sky-800 hover:text-white transition w-full sm:w-auto text-center">Clear
+                                Wishlist</button>
+                        </form>
+                    </div>
+                </div>
+
             @endif
         </div>
     </section>
