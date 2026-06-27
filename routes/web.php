@@ -67,5 +67,6 @@ Route::delete('/cart/clear', [CartController::class,'clear_cart'])->name('cart.c
 
 //wishlist
 Route::post('/wishlist/add', [WishlistController::class,'add_to_wishlist'])->name('wishlist.add');
+Route::get('/wishlist', [WishlistController::class,'index'])->name('wishlist.index');
 
 require __DIR__.'/auth.php';

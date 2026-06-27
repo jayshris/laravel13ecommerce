@@ -19,4 +19,9 @@ class WishlistController extends Controller
 
         return back()->with('success', 'Product added to wishlist successfully!');
     }
+
+    public function index()
+    {
+        return view('wishlist.index');
+    }
 }
