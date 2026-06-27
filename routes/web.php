@@ -70,6 +70,7 @@ Route::post('/wishlist/add', [WishlistController::class,'add_to_wishlist'])->nam
 Route::get('/wishlist', [WishlistController::class,'index'])->name('wishlist.index');
 Route::delete('/wishlist/remove/{rowId}', [WishlistController::class,'remove_from_wishlist'])->name('wishlist.remove');
 Route::delete('/wishlist/clear', [WishlistController::class,'clear_wishlist'])->name('wishlist.clear');
+Route::post('/wishlist/move-to-cart/{rowId}', [WishlistController::class,'move_to_cart'])->name('wishlist.move.to.cart');
 
 
 require __DIR__.'/auth.php';
