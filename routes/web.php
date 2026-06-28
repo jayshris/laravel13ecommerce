@@ -56,6 +56,8 @@ Route::middleware([AuthAdmin::class])->group(function () {
 
     //Coupons
     Route::get('/admin/coupons', [CouponController::class,'coupons'])->name('admin.coupons');
+    Route::get('admin/coupon-add', [CouponController::class,'coupon_add'])->name('admin.coupon.add');
+    Route::post('admin/coupon-store', [CouponController::class,'coupon_store'])->name('admin.coupon.store');
 });
 
 //shop
