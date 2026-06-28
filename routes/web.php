@@ -10,6 +10,7 @@ use App\Http\Middleware\AuthAdmin;
 use App\Http\Controllers\ShopController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\WishlistController;
+use App\Http\Controllers\CouponController;
 
 Route::get('/', [HomeController::class,'index'])->name('home.index');
 
@@ -52,6 +53,9 @@ Route::middleware([AuthAdmin::class])->group(function () {
     Route::delete('/product-delete/{id}', [ProductController::class,'productDelete'])->name('admin.product.delete');
     Route::delete('/products-bulk-delete', [ProductController::class,'productBultDelete'])->name('admin.products.bulk.delete');
     Route::get('/products-export', [ProductController::class,'productExport'])->name('admin.products.export');
+
+    //Coupons
+    Route::get('/admin/coupons', [CouponController::class,'coupons'])->name('admin.coupons');
 });
 
 //shop
