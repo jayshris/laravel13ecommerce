@@ -48,9 +48,8 @@ class ShopController extends Controller
             });
         }
 
-
         $products = $query->paginate($per_page)->withQueryString();
-
+        // dd($query->toRawSql());
         $brands = Brand::withCount([
             'products'=> function ($query) {
                     $query->where('status', true);

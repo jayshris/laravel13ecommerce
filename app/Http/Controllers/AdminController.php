@@ -32,7 +32,6 @@ class AdminController extends Controller
         }
 
         $brands=  $query->orderBy('id','DESC')->paginate(10)->withQueryString();
-        // dd(DB::getQueryLog());
 
         return view('admin.brands',compact('brands'));
     }

@@ -144,8 +144,8 @@
                                             </div>
                                         </div>
                                     </td>
-                                    <td class="px-6 py-4 text-sm text-gray-600">{{ $pro->brand->name }}</td>
-                                    <td class="px-6 py-4 text-sm text-gray-600">{{ $pro->category->name }}</td>
+                                    <td class="px-6 py-4 text-sm text-gray-600">{{ isset($pro->brand) ? $pro->brand->name : ''}}</td>
+                                    <td class="px-6 py-4 text-sm text-gray-600">{{ isset($pro->category) ? $pro->category->name : ''}}</td>
                                     <td class="px-6 py-4 text-sm font-medium text-gray-800">
                                         @if ($pro->sale_price)
                                             <span

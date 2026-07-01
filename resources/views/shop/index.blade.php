@@ -113,75 +113,19 @@
                                 <div class="absolute h-1 bg-primary rounded left-0 right-0" id="range-track"
                                     style="left: 0%; right:0%;"></div>
                             </div>
-                            <input type="range" name="min_price" min="0" max="1000"
+                            <input type="range" name="min_price" min="0" max="50000"
                                 value="{{ request('min_price', 0) }}"
                                 class="absolute w-full h-1 bg-transparent appearance-none top-6 left-0 pointer-events-none z-20 custom-range-slider price-slider"
                                 id="range-min">
-                            <input type="range" name="max_price" min="0" max="1000"
-                                value="{{ request('max_price', 1000) }}"
+                            <input type="range" name="max_price" min="0" max="50000"
+                                value="{{ request('max_price', 50000) }}"
                                 class="absolute w-full h-1 bg-transparent appearance-none top-6 left-0 pointer-events-none z-20 custom-range-slider price-slider"
                                 id="range-max">
 
                             <div class="flex justify-between mt-4 text-sm font-medium text-gray-600">
                                 <span>$<span id="price-min-display">{{ request('min_price', 0) }}</span></span>
-                                <span>$<span id="price-max-display">{{ request('max_price', 1000) }}</span></span>
+                                <span>$<span id="price-max-display">{{ request('max_price', 50000) }}</span></span>
                             </div>
-                        </div>
-                    </div>
-
-                    <div class="bg-gray-50 p-6 rounded-lg border">
-                        <h4 class="font-bold text-lg mb-4">Filter By Color</h4>
-                        <ul class="space-y-3">
-                            <li class="flex items-center">
-                                <input type="checkbox" id="c1" class="hidden peer">
-                                <label for="c1"
-                                    class="flex items-center cursor-pointer hover:text-primary peer-checked:text-primary group">
-                                    <span
-                                        class="w-4 h-4 rounded-full bg-blue-500 mr-3 border border-gray-200 group-hover:shadow-md"></span>
-                                    Blue
-                                </label>
-                            </li>
-                            <li class="flex items-center">
-                                <input type="checkbox" id="c2" class="hidden peer">
-                                <label for="c2"
-                                    class="flex items-center cursor-pointer hover:text-primary peer-checked:text-primary group">
-                                    <span
-                                        class="w-4 h-4 rounded-full bg-green-500 mr-3 border border-gray-200 group-hover:shadow-md"></span>
-                                    Green
-                                </label>
-                            </li>
-                            <li class="flex items-center">
-                                <input type="checkbox" id="c3" class="hidden peer">
-                                <label for="c3"
-                                    class="flex items-center cursor-pointer hover:text-primary peer-checked:text-primary group">
-                                    <span
-                                        class="w-4 h-4 rounded-full bg-gray-500 mr-3 border border-gray-200 group-hover:shadow-md"></span>
-                                    Gray
-                                </label>
-                            </li>
-                            <li class="flex items-center">
-                                <input type="checkbox" id="c4" class="hidden peer">
-                                <label for="c4"
-                                    class="flex items-center cursor-pointer hover:text-primary peer-checked:text-primary group">
-                                    <span
-                                        class="w-4 h-4 rounded-full bg-black mr-3 border border-gray-200 group-hover:shadow-md"></span>
-                                    Black
-                                </label>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <div class="bg-gray-50 p-6 rounded-lg border">
-                        <h4 class="font-bold text-lg mb-4">Tags</h4>
-                        <div class="flex flex-wrap gap-2">
-                            <a href="#"
-                                class="px-3 py-1 bg-white border rounded text-sm hover:bg-primary hover:text-white transition">Clothing</a>
-                            <a href="#"
-                                class="px-3 py-1 bg-white border rounded text-sm hover:bg-primary hover:text-white transition">Furniture</a>
-                            <a href="#"
-                                class="px-3 py-1 bg-white border rounded text-sm hover:bg-primary hover:text-white transition">Lights</a>
-                            <a href="#"
-                                class="px-3 py-1 bg-white border rounded text-sm hover:bg-primary hover:text-white transition">Modern</a>
                         </div>
                     </div>
 
